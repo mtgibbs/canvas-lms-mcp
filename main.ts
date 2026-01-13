@@ -1,0 +1,48 @@
+/**
+ * Canvas CLI - Main Entry Point
+ * A command-line tool for interacting with the Canvas LMS API
+ */
+
+import { Command } from "@cliffy/command";
+import { exitWithError } from "./src/utils/output.ts";
+
+// Import commands
+import { coursesCommand } from "./src/commands/courses.ts";
+import { missingCommand } from "./src/commands/missing.ts";
+import { assignmentsCommand } from "./src/commands/assignments.ts";
+import { gradesCommand } from "./src/commands/grades.ts";
+import { upcomingCommand } from "./src/commands/upcoming.ts";
+
+const VERSION = "0.1.0";
+
+// Main CLI command
+const cli = new Command()
+  .name("canvas")
+  .version(VERSION)
+  .description(
+    "Canvas LMS CLI - Query courses, grades, assignments, and more from Canvas.\n\n" +
+      "Configure by setting CANVAS_API_TOKEN and CANVAS_BASE_URL in .env or environment."
+  )
+  .globalOption("-f, --format <format:string>", "Output format: json (default) or table", {
+    default: "json",
+  })
+  .globalOption("-s, --student <id:string>", "Student ID for observer accounts (default: self)", {
+    default: "self",
+  })
+  // Add subcommands
+  .command("courses", coursesCommand)
+  .command("missing", missingCommand)
+  .command("assignments", assignmentsCommand)
+  .command("grades", gradesCommand)
+  .command("upcoming", upcomingCommand);
+
+// Run
+try {
+  await cli.parse(Deno.args);
+} catch (error) {
+  if (error instanceof Error) {
+    exitWithError(error.message);
+  } else {
+    exitWithError(String(error));
+  }
+}
