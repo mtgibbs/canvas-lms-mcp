@@ -1,5 +1,6 @@
 /**
  * Type definitions for MCP tools and prompts
+ * Updated for MCP SDK v1.12+
  */
 
 import type { z } from "zod";
@@ -20,6 +21,49 @@ export interface ToolAnnotations {
 }
 
 /**
+ * Text content item in tool response
+ */
+export interface TextContent {
+  type: "text";
+  text: string;
+}
+
+/**
+ * Image content item in tool response
+ */
+export interface ImageContent {
+  type: "image";
+  data: string;
+  mimeType: string;
+}
+
+/**
+ * Resource content item in tool response
+ */
+export interface ResourceContent {
+  type: "resource";
+  resource: {
+    uri: string;
+    text?: string;
+    blob?: string;
+    mimeType?: string;
+  };
+}
+
+/**
+ * Content types supported in tool responses
+ */
+export type ToolContentItem = TextContent | ImageContent | ResourceContent;
+
+/**
+ * Standard tool response format (MCP SDK v1.12+ compatible)
+ */
+export interface ToolResponse {
+  content: ToolContentItem[];
+  isError?: boolean;
+}
+
+/**
  * Tool definition that can be registered with the MCP server
  *
  * Use the generic version for type-safe tool definitions.
@@ -35,20 +79,6 @@ export interface ToolDefinition<T extends z.ZodRawShape = z.ZodRawShape> {
 
 // deno-lint-ignore no-explicit-any
 export type AnyToolDefinition = ToolDefinition<any>;
-
-/**
- * Standard tool response format
- */
-export interface ToolResponse {
-  content: Array<{
-    type: "text" | "image" | "resource";
-    text?: string;
-    data?: string;
-    mimeType?: string;
-    uri?: string;
-  }>;
-  isError?: boolean;
-}
 
 /**
  * Prompt argument definition
