@@ -33,7 +33,7 @@ export interface ToolDefinition<T extends z.ZodRawShape = z.ZodRawShape> {
   handler: (args: z.infer<z.ZodObject<T>>) => Promise<ToolResponse>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// deno-lint-ignore no-explicit-any
 export type AnyToolDefinition = ToolDefinition<any>;
 
 /**

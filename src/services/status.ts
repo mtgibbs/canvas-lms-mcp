@@ -101,10 +101,9 @@ export async function getComprehensiveStatus(
         })
         .map((sub) => {
           const pointsPossible = sub.assignment?.points_possible || 0;
-          const percentage =
-            sub.score !== null && pointsPossible > 0
-              ? Math.round((sub.score / pointsPossible) * 100)
-              : null;
+          const percentage = sub.score !== null && pointsPossible > 0
+            ? Math.round((sub.score / pointsPossible) * 100)
+            : null;
 
           return {
             course_id: course.id,
@@ -148,8 +147,7 @@ export async function getComprehensiveStatus(
     id: sub.id,
     name: sub.name,
     course_id: sub.course_id,
-    course_name:
-      sub.course?.name || courseMap.get(sub.course_id) || `Course ${sub.course_id}`,
+    course_name: sub.course?.name || courseMap.get(sub.course_id) || `Course ${sub.course_id}`,
     due_at: sub.due_at,
     points_possible: sub.points_possible,
     url: sub.html_url,

@@ -24,12 +24,12 @@ Ask Claude things like:
 
 Choose the method that works best for you:
 
-| Method                                                       | Best For                        | Credential Storage              |
-| ------------------------------------------------------------ | ------------------------------- | ------------------------------- |
-| [Desktop Extension](#option-1-desktop-extension-recommended) | Easy one-click install          | OS Keychain (secure)            |
-| [Claude Code (CLI)](#option-2-claude-code-cli)               | Developers using Claude Code    | Shell env vars or config file   |
-| [npm Package](#option-3-npm-package)                         | Claude Desktop + 1Password      | Config file or password manager |
-| [Standalone CLI](#standalone-cli)                            | Direct terminal use without AI  | Environment variables           |
+| Method                                                       | Best For                       | Credential Storage              |
+| ------------------------------------------------------------ | ------------------------------ | ------------------------------- |
+| [Desktop Extension](#option-1-desktop-extension-recommended) | Easy one-click install         | OS Keychain (secure)            |
+| [Claude Code (CLI)](#option-2-claude-code-cli)               | Developers using Claude Code   | Shell env vars or config file   |
+| [npm Package](#option-3-npm-package)                         | Claude Desktop + 1Password     | Config file or password manager |
+| [Standalone CLI](#standalone-cli)                            | Direct terminal use without AI | Environment variables           |
 
 ---
 
@@ -284,18 +284,18 @@ Add `CANVAS_STUDENT_ID` to your environment variables:
 
 Once connected, Claude has access to these capabilities:
 
-| Tool                       | Description                                         |
-| -------------------------- | --------------------------------------------------- |
-| `get_courses`              | List all courses with current grades                |
+| Tool                       | Description                                                    |
+| -------------------------- | -------------------------------------------------------------- |
+| `get_courses`              | List all courses with current grades                           |
 | `get_comprehensive_status` | Full academic overview in one call (grades, missing, upcoming) |
-| `get_missing_assignments`  | Assignments flagged as missing by Canvas            |
-| `get_unsubmitted_past_due` | Past-due work not yet submitted                     |
-| `get_recent_grades`        | Recently graded assignments with scores             |
-| `get_upcoming_assignments` | Assignments due soon for a specific course          |
-| `get_due_this_week`        | All assignments due across all courses              |
-| `list_assignments`         | Search/filter assignments by status                 |
-| `get_stats`                | Late/missing statistics by course                   |
-| `get_todo`                 | Planner items and to-do list                        |
+| `get_missing_assignments`  | Assignments flagged as missing by Canvas                       |
+| `get_unsubmitted_past_due` | Past-due work not yet submitted                                |
+| `get_recent_grades`        | Recently graded assignments with scores                        |
+| `get_upcoming_assignments` | Assignments due soon for a specific course                     |
+| `get_due_this_week`        | All assignments due across all courses                         |
+| `list_assignments`         | Search/filter assignments by status                            |
+| `get_stats`                | Late/missing statistics by course                              |
+| `get_todo`                 | Planner items and to-do list                                   |
 
 ---
 

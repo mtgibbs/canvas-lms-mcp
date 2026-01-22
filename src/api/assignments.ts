@@ -8,7 +8,7 @@ import type { Assignment, ListAssignmentsOptions } from "../types/canvas.ts";
 /**
  * List assignments for a course
  */
-export async function listAssignments(options: ListAssignmentsOptions): Promise<Assignment[]> {
+export function listAssignments(options: ListAssignmentsOptions): Promise<Assignment[]> {
   const client = getClient();
   const { course_id, ...rest } = options;
 
@@ -33,7 +33,7 @@ export async function listAssignments(options: ListAssignmentsOptions): Promise<
 /**
  * Get a single assignment by ID
  */
-export async function getAssignment(
+export function getAssignment(
   courseId: number,
   assignmentId: number,
   include?: Array<"submission" | "assignment_visibility" | "all_dates" | "overrides">,
@@ -72,7 +72,7 @@ export async function listAssignmentsDueInRange(
 /**
  * List assignments due this week
  */
-export async function listAssignmentsDueThisWeek(courseId: number): Promise<Assignment[]> {
+export function listAssignmentsDueThisWeek(courseId: number): Promise<Assignment[]> {
   const now = new Date();
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() - now.getDay());
@@ -88,7 +88,7 @@ export async function listAssignmentsDueThisWeek(courseId: number): Promise<Assi
 /**
  * List upcoming assignments (next N days)
  */
-export async function listUpcomingAssignments(
+export function listUpcomingAssignments(
   courseId: number,
   days: number = 7,
 ): Promise<Assignment[]> {
@@ -102,7 +102,7 @@ export async function listUpcomingAssignments(
 /**
  * List overdue assignments
  */
-export async function listOverdueAssignments(courseId: number): Promise<Assignment[]> {
+export function listOverdueAssignments(courseId: number): Promise<Assignment[]> {
   return listAssignments({
     course_id: courseId,
     bucket: "overdue",

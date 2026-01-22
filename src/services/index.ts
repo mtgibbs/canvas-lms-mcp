@@ -22,25 +22,22 @@ export {
   type MissingCountByCourse,
 } from "./missing.ts";
 export {
-  listAssignments,
   type AssignmentBucket,
   type AssignmentResult,
+  listAssignments,
   type ListAssignmentsOptions,
 } from "./assignments.ts";
-export { getRecentGrades, type GetGradesOptions } from "./grades.ts";
+export { type GetGradesOptions, getRecentGrades } from "./grades.ts";
 export {
   getUpcomingAssignments,
   type GetUpcomingOptions,
   type UpcomingAssignment,
 } from "./upcoming.ts";
 export { getTodoItems, type GetTodoOptions, type TodoItem } from "./todo.ts";
-export { getStats, type CourseStats, type GetStatsOptions } from "./stats.ts";
+export { type CourseStats, getStats, type GetStatsOptions } from "./stats.ts";
 export { getComprehensiveStatus, type GetStatusOptions } from "./status.ts";
 export { getDueAssignments, type GetDueOptions } from "./due.ts";
-export {
-  getUnsubmittedAssignments,
-  type GetUnsubmittedOptions,
-} from "./unsubmitted.ts";
+export { getUnsubmittedAssignments, type GetUnsubmittedOptions } from "./unsubmitted.ts";
 export {
   getUpcomingEvents,
   type GetUpcomingEventsOptions,

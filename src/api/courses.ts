@@ -8,7 +8,7 @@ import type { Course, Enrollment, ListCoursesOptions } from "../types/canvas.ts"
 /**
  * List all courses for the authenticated user
  */
-export async function listCourses(options?: ListCoursesOptions): Promise<Course[]> {
+export function listCourses(options?: ListCoursesOptions): Promise<Course[]> {
   const client = getClient();
 
   const params: Record<string, string | string[] | undefined> = {};
@@ -32,7 +32,7 @@ export async function listCourses(options?: ListCoursesOptions): Promise<Course[
 /**
  * Get a single course by ID
  */
-export async function getCourse(courseId: number): Promise<Course> {
+export function getCourse(courseId: number): Promise<Course> {
   const client = getClient();
   return client.get<Course>(`/courses/${courseId}`);
 }
@@ -40,7 +40,7 @@ export async function getCourse(courseId: number): Promise<Course> {
 /**
  * List enrollments for a course (includes grade info)
  */
-export async function listCourseEnrollments(
+export function listCourseEnrollments(
   courseId: number,
   options?: {
     type?: string[];

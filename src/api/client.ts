@@ -196,7 +196,7 @@ export class CanvasClient {
   /**
    * Convenience method for GET requests that return arrays (with pagination)
    */
-  async getAll<T>(
+  getAll<T>(
     path: string,
     params?: Record<string, string | string[] | number | boolean | undefined>,
   ): Promise<T[]> {

@@ -6,7 +6,7 @@
 import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import { getStats, type CourseStats } from "../services/index.ts";
+import { type CourseStats, getStats } from "../services/index.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const statsCommand = new Command()
