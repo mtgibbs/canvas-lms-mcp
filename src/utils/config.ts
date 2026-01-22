@@ -1,6 +1,9 @@
 /**
  * Configuration loader for Canvas CLI
  * Loads settings from environment variables
+ *
+ * Note: When built for npm with dnt, Deno APIs are shimmed to Node.js equivalents.
+ * The dotenv loading for Node.js is handled by the bin wrapper.
  */
 
 import { load } from "@std/dotenv";

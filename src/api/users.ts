@@ -8,7 +8,9 @@ import type {
   MissingSubmission,
   UpcomingEvent,
   Submission,
+  PlannerItem,
 } from "../types/canvas.ts";
+import { listCourses } from "./courses.ts";
 
 /**
  * Options for getMissingSubmissions
@@ -152,4 +154,68 @@ export async function getObservedStudents(
 ): Promise<import("../types/canvas.ts").User[]> {
   const client = getClient();
   return client.getAll<import("../types/canvas.ts").User>(`/users/${userId}/observees`);
+}
+
+/**
+ * Options for getPlannerItems
+ */
+export interface GetPlannerOptions {
+  /** Student ID - required for observer accounts */
+  studentId?: string | number;
+  /** Start date (ISO 8601 or yyyy-mm-dd) */
+  startDate?: string;
+  /** End date (ISO 8601 or yyyy-mm-dd) */
+  endDate?: string;
+  /** Filter to specific course IDs */
+  courseIds?: number[];
+  /** Filter for new_activity only */
+  filter?: "new_activity";
+}
+
+/**
+ * Get planner items (to-do list) for a student
+ *
+ * For observers (parents): pass the student's numeric ID as studentId
+ * For students: pass "self" or omit studentId
+ *
+ * Note: For observers, this endpoint requires context_codes. We automatically
+ * fetch active courses and include them as context_codes.
+ */
+export async function getPlannerItems(
+  options?: GetPlannerOptions
+): Promise<PlannerItem[]> {
+  const client = getClient();
+  const studentId = options?.studentId;
+
+  const params: Record<string, string | string[] | undefined> = {};
+
+  // For observers, we need context_codes with the observed_user_id
+  if (studentId && studentId !== "self") {
+    params.observed_user_id = String(studentId);
+
+    // Get active courses to build context_codes
+    let courseIds = options?.courseIds;
+    if (!courseIds?.length) {
+      const courses = await listCourses({
+        enrollment_state: "active",
+        state: ["available"],
+      });
+      courseIds = courses.map((c) => c.id);
+    }
+
+    // Build context_codes array (client adds [] automatically)
+    params.context_codes = courseIds.map((id) => `course_${id}`);
+  }
+
+  if (options?.startDate) {
+    params.start_date = options.startDate;
+  }
+  if (options?.endDate) {
+    params.end_date = options.endDate;
+  }
+  if (options?.filter) {
+    params.filter = options.filter;
+  }
+
+  return client.getAll<PlannerItem>("/planner/items", params);
 }

@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canvas-mcp
+  namespace: canvas-mcp
+  annotations:
+    # For k3s with Traefik (default)
+    kubernetes.io/ingress.class: traefik
+    # Uncomment for nginx ingress controller
+    # kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    # Option 1: Local DNS (add to /etc/hosts on client machines)
+    - host: canvas-mcp.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: canvas-mcp
+                port:
+                  number: 3001
+    # Option 2: Use your actual domain if you have one
+    # - host: canvas.yourdomain.com
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: canvas-mcp
+    #             port:
+    #               number: 3001
+---
+# Optional: IngressRoute for Traefik (k3s default) with more control
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: IngressRoute
+# metadata:
+#   name: canvas-mcp
+#   namespace: canvas-mcp
+# spec:
+#   entryPoints:
+#     - web
+#   routes:
+#     - match: Host(`canvas-mcp.local`)
+#       kind: Rule
+#       services:
+#         - name: canvas-mcp
+#           port: 3001

@@ -8,6 +8,12 @@ canvas
 canvas.exe
 dist/
 
+# npm build output (dnt)
+npm/
+
+# Desktop Extension build output
+extension/
+
 # Deno cache
 .deno/
 

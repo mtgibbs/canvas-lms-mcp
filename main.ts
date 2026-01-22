@@ -12,6 +12,8 @@ import { missingCommand } from "./src/commands/missing.ts";
 import { assignmentsCommand } from "./src/commands/assignments.ts";
 import { gradesCommand } from "./src/commands/grades.ts";
 import { upcomingCommand } from "./src/commands/upcoming.ts";
+import { todoCommand } from "./src/commands/todo.ts";
+import { statsCommand } from "./src/commands/stats.ts";
 
 const VERSION = "0.1.0";
 
@@ -34,7 +36,9 @@ const cli = new Command()
   .command("missing", missingCommand)
   .command("assignments", assignmentsCommand)
   .command("grades", gradesCommand)
-  .command("upcoming", upcomingCommand);
+  .command("upcoming", upcomingCommand)
+  .command("todo", todoCommand)
+  .command("stats", statsCommand);
 
 // Run
 try {

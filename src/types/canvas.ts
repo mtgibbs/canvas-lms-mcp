@@ -209,6 +209,44 @@ export interface UpcomingEvent {
   assignment?: Assignment;
 }
 
+/** Planner item (from /api/v1/planner/items) */
+export interface PlannerItem {
+  context_type: "Course" | "Group" | "User";
+  course_id?: number;
+  group_id?: number;
+  user_id?: number;
+  plannable_id: number;
+  plannable_type: "assignment" | "quiz" | "discussion_topic" | "wiki_page" | "planner_note" | "calendar_event" | "announcement";
+  planner_override: PlannerOverride | null;
+  new_activity: boolean;
+  submissions?: PlannerSubmissionStatus;
+  plannable_date: string;
+  plannable: {
+    id: number;
+    title: string;
+    created_at: string;
+    updated_at: string;
+    points_possible: number | null;
+    due_at: string | null;
+  };
+  html_url: string;
+  context_name: string;
+  context_image?: string | null;
+}
+
+/** Submission status in planner items */
+export interface PlannerSubmissionStatus {
+  submitted: boolean;
+  excused: boolean;
+  graded: boolean;
+  posted_at: string | null;
+  late: boolean;
+  missing: boolean;
+  needs_grading: boolean;
+  has_feedback: boolean;
+  redo_request: boolean;
+}
+
 /** Canvas API pagination info parsed from Link header */
 export interface PaginationLinks {
   current?: string;

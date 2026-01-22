@@ -59,6 +59,10 @@ canvas grades --course-id 12345 --below 80
 # Upcoming events
 canvas upcoming --days 14
 
+# To-do list (planner items)
+canvas todo --student 200257 --days 7
+canvas todo --hide-submitted
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (default: self)
@@ -72,7 +76,7 @@ src/
 │   ├── client.ts  # HTTP client with auth and pagination
 │   ├── courses.ts, assignments.ts, submissions.ts, users.ts, enrollments.ts
 ├── commands/      # CLI commands (Cliffy)
-│   ├── courses.ts, missing.ts, assignments.ts, grades.ts, upcoming.ts
+│   ├── courses.ts, missing.ts, assignments.ts, grades.ts, upcoming.ts, todo.ts
 ├── types/
 │   └── canvas.ts  # TypeScript interfaces for Canvas API
 └── utils/
@@ -111,6 +115,7 @@ CANVAS_STUDENT_ID=self
 | assignments | `GET /api/v1/courses/:id/assignments` |
 | grades | `GET /api/v1/courses/:id/students/submissions` |
 | upcoming | `GET /api/v1/users/:id/upcoming_events` |
+| todo | `GET /api/v1/planner/items` with context_codes |
 
 ## Important Canvas API Behaviors
 

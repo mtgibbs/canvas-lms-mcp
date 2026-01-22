@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Type check and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type check
+        run: deno task check
+
+      - name: Lint
+        run: deno task lint
+
+      - name: Format check
+        run: deno fmt --check
+
+  build-npm:
+    name: Build npm package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build npm package
+        run: deno task build:npm
+
+      - name: Verify npm package
+        run: |
+          cd npm
+          npm pack --dry-run
+
+  build-extension:
+    name: Build extension
+    runs-on: ubuntu-latest
+    needs: build-npm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install mcpb CLI
+        run: npm install -g @anthropic-ai/mcpb
+
+      - name: Build npm package
+        run: deno task build:npm
+
+      - name: Build extension
+        run: deno task build:extension
+
+      - name: Validate extension
+        run: mcpb validate npm/manifest.json
