@@ -9,7 +9,7 @@
  * Run with: deno run -A build_extension.ts
  */
 
-import { ensureDir } from "jsr:@std/fs";
+import { ensureDir } from "jsr:@std/fs@1";
 
 // Get version from deno.json
 const denoJson = JSON.parse(await Deno.readTextFile("./deno.json"));

@@ -71,10 +71,9 @@ export async function getRecentGrades(
   // Calculate percentages and build results
   const results: GradedAssignment[] = filteredSubmissions.map((sub) => {
     const pointsPossible = sub.assignment?.points_possible || 0;
-    const percentage =
-      sub.score !== null && pointsPossible > 0
-        ? Math.round((sub.score / pointsPossible) * 100)
-        : null;
+    const percentage = sub.score !== null && pointsPossible > 0
+      ? Math.round((sub.score / pointsPossible) * 100)
+      : null;
 
     return {
       course_id: sub._course_id,

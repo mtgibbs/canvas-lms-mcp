@@ -96,7 +96,12 @@ export async function listAssignments(
 
 function fetchAssignmentsForCourse(
   courseId: number,
-  options: { dueThisWeek?: boolean; upcoming?: number; bucket?: AssignmentBucket; searchTerm?: string },
+  options: {
+    dueThisWeek?: boolean;
+    upcoming?: number;
+    bucket?: AssignmentBucket;
+    searchTerm?: string;
+  },
 ): Promise<Assignment[]> {
   if (options.dueThisWeek) {
     return listAssignmentsDueThisWeek(courseId);

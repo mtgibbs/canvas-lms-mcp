@@ -8,7 +8,7 @@ import type { ListSubmissionsOptions, Submission } from "../types/canvas.ts";
 /**
  * List submissions for a course (all students or specific students)
  */
-export async function listSubmissions(options: ListSubmissionsOptions): Promise<Submission[]> {
+export function listSubmissions(options: ListSubmissionsOptions): Promise<Submission[]> {
   const client = getClient();
   const { course_id, ...rest } = options;
 
@@ -36,7 +36,7 @@ export async function listSubmissions(options: ListSubmissionsOptions): Promise<
 /**
  * Get submission for a specific assignment and user
  */
-export async function getSubmission(
+export function getSubmission(
   courseId: number,
   assignmentId: number,
   userId: number | string,
@@ -58,7 +58,7 @@ export async function getSubmission(
 /**
  * List all submissions for a specific user in a course
  */
-export async function listUserSubmissions(
+export function listUserSubmissions(
   courseId: number,
   userId: number | string,
   options?: {

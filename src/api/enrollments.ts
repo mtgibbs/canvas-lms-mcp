@@ -9,7 +9,7 @@ import type { Enrollment } from "../types/canvas.ts";
 /**
  * List enrollments for a user across all courses
  */
-export async function listUserEnrollments(
+export function listUserEnrollments(
   userId: string | number = "self",
   options?: {
     type?: string[];
@@ -37,7 +37,7 @@ export async function listUserEnrollments(
 /**
  * Get active student enrollments with grades
  */
-export async function getActiveEnrollmentsWithGrades(
+export function getActiveEnrollmentsWithGrades(
   userId: string | number = "self",
 ): Promise<Enrollment[]> {
   return listUserEnrollments(userId, {

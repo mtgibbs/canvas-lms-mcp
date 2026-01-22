@@ -30,7 +30,7 @@ export interface GetMissingOptions {
  * Note: The Canvas API requires the student ID in the URL path for observers.
  * The observed_user_id parameter does NOT work for this endpoint.
  */
-export async function getMissingSubmissions(
+export function getMissingSubmissions(
   options?: GetMissingOptions,
 ): Promise<MissingSubmission[]> {
   const client = getClient();
@@ -54,7 +54,7 @@ export async function getMissingSubmissions(
 /**
  * Get upcoming events for a user (assignments and calendar events)
  */
-export async function getUpcomingEvents(
+export function getUpcomingEvents(
   userId: string | number = "self",
 ): Promise<UpcomingEvent[]> {
   const client = getClient();
@@ -64,7 +64,7 @@ export async function getUpcomingEvents(
 /**
  * Get todo items for a user (assignments needing submission)
  */
-export async function getTodoItems(
+export function getTodoItems(
   userId: string | number = "self",
 ): Promise<Array<{ assignment: MissingSubmission; context_name: string }>> {
   const client = getClient();
@@ -76,7 +76,7 @@ export async function getTodoItems(
 /**
  * Get recently graded submissions for a user
  */
-export async function getGradedSubmissions(
+export function getGradedSubmissions(
   userId: string | number = "self",
   options?: {
     onlyPublished?: boolean;
@@ -146,7 +146,7 @@ export async function getMissingCountsByCourse(
  * Get observed students (for parent/observer accounts)
  * Returns the list of users that the current user is observing
  */
-export async function getObservedStudents(
+export function getObservedStudents(
   userId: string | number = "self",
 ): Promise<import("../types/canvas.ts").User[]> {
   const client = getClient();

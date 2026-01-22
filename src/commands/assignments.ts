@@ -6,7 +6,7 @@
 import { Command } from "@cliffy/command";
 import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import { listAssignments, type AssignmentBucket } from "../services/index.ts";
+import { type AssignmentBucket, listAssignments } from "../services/index.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const assignmentsCommand = new Command()

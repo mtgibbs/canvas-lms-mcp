@@ -10,11 +10,7 @@ import { z } from "zod";
 import { ensureClient } from "./src/utils/init.ts";
 import { listCourses, listCoursesWithGrades } from "./src/api/courses.ts";
 import { getMissingSubmissions, getPlannerItems } from "./src/api/users.ts";
-import {
-  listAssignments,
-  listAssignmentsDueThisWeek,
-  listUpcomingAssignments,
-} from "./src/api/assignments.ts";
+import { listAssignments, listUpcomingAssignments } from "./src/api/assignments.ts";
 import { listSubmissions, listUnsubmittedPastDueForStudent } from "./src/api/submissions.ts";
 
 // Initialize configuration and client

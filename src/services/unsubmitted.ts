@@ -48,8 +48,7 @@ export async function getUnsubmittedAssignments(
           id: sub.assignment!.id,
           name: sub.assignment!.name,
           course_id: sub.assignment!.course_id,
-          course_name:
-            courseMap.get(sub.assignment!.course_id) ||
+          course_name: courseMap.get(sub.assignment!.course_id) ||
             `Course ${sub.assignment!.course_id}`,
           due_at: sub.assignment!.due_at,
           points_possible: sub.assignment!.points_possible,

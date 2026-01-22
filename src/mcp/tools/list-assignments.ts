@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { listAssignments, type AssignmentBucket } from "../../services/index.ts";
+import { type AssignmentBucket, listAssignments } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {

@@ -7,7 +7,7 @@
  * - MCP: `get_stats`
  */
 
-import { getStudentStats, type CourseStats } from "../api/stats.ts";
+import { type CourseStats, getStudentStats } from "../api/stats.ts";
 
 // Re-export the type for consumers
 export type { CourseStats };
