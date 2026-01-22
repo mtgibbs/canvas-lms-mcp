@@ -1,5 +1,12 @@
 # Canvas MCP Server - Multi-arch Dockerfile
 # Supports amd64 and arm64 (for Raspberry Pi)
+#
+# Entry points:
+#   - api-server.ts: REST API for ChatGPT Actions, curl, etc. (default)
+#   - agent-sse.ts: MCP SSE transport for Claude Desktop, MCP clients
+#
+# To use MCP instead of REST API, override CMD:
+#   docker run ... deno run -A agent-sse.ts
 
 FROM denoland/deno:alpine-2.1.4
 
@@ -15,7 +22,7 @@ RUN deno cache --reload deno.json || true
 COPY . .
 
 # Cache the main entry points
-RUN deno cache api-server.ts main.ts
+RUN deno cache api-server.ts agent-sse.ts main.ts
 
 # Default to REST API server for remote deployment
 EXPOSE 3001
@@ -24,5 +31,6 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
 
-# Use REST API server (works with ChatGPT Actions, any HTTP client)
+# Use REST API server by default (works with ChatGPT Actions, any HTTP client)
+# Override with: docker run ... deno run -A agent-sse.ts
 CMD ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "api-server.ts"]

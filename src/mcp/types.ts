@@ -10,6 +10,8 @@ import type { z } from "zod";
  * These hints describe tool behavior for safety and UI purposes
  */
 export interface ToolAnnotations {
+  /** Human-readable title for the tool */
+  title?: string;
   /** If true, the tool does not modify its environment (read-only operation) */
   readOnlyHint?: boolean;
   /** If true, the tool may perform destructive updates */
@@ -18,6 +20,8 @@ export interface ToolAnnotations {
   idempotentHint?: boolean;
   /** If true, tool interacts with external entities */
   openWorldHint?: boolean;
+  /** Allow additional properties for SDK compatibility */
+  [key: string]: unknown;
 }
 
 /**
