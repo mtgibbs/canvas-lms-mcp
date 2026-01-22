@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { getMissingSubmissions } from "../../api/users.ts";
+import { getMissingAssignments } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -18,21 +18,11 @@ export const getMissingAssignmentsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, course_id }) => {
-    const missing = await getMissingSubmissions({
+    const missing = await getMissingAssignments({
       studentId: student_id || "self",
-      courseIds: course_id ? [course_id] : undefined,
-      include: ["course"],
+      courseId: course_id,
     });
 
-    const simplified = missing.map((m) => ({
-      id: m.id,
-      name: m.name,
-      course: m.course?.name,
-      due_at: m.due_at,
-      points_possible: m.points_possible,
-      url: m.html_url,
-    }));
-
-    return jsonResponse(simplified);
+    return jsonResponse(missing);
   },
 };

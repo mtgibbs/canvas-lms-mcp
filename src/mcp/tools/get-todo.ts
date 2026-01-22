@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { getPlannerItems } from "../../api/users.ts";
+import { getTodoItems } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -24,41 +24,12 @@ export const getTodoTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, hide_submitted }) => {
-    const startDate = new Date().toISOString().split("T")[0];
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + days);
-    const endDateStr = endDate.toISOString().split("T")[0];
-
-    const items = await getPlannerItems({
+    const items = await getTodoItems({
       studentId: student_id,
-      startDate,
-      endDate: endDateStr,
+      days,
+      hideSubmitted: hide_submitted,
     });
 
-    // Filter out submitted items if requested
-    let filteredItems = items;
-    if (hide_submitted) {
-      filteredItems = items.filter((item) => !item.submissions?.submitted);
-    }
-
-    // Sort by due date
-    filteredItems.sort((a, b) => {
-      return new Date(a.plannable_date).getTime() - new Date(b.plannable_date).getTime();
-    });
-
-    // Simplify for LLM output
-    const simplified = filteredItems.map((item) => ({
-      course_name: item.context_name,
-      title: item.plannable.title,
-      type: item.plannable_type,
-      due_at: item.plannable_date,
-      points_possible: item.plannable.points_possible,
-      submitted: item.submissions?.submitted || false,
-      missing: item.submissions?.missing || false,
-      graded: item.submissions?.graded || false,
-      url: item.html_url,
-    }));
-
-    return jsonResponse(simplified);
+    return jsonResponse(items);
   },
 };

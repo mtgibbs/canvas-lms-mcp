@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { listUpcomingAssignments } from "../../api/assignments.ts";
+import { getUpcomingAssignments } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -18,17 +18,11 @@ export const getUpcomingAssignmentsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ course_id, days }) => {
-    const assignments = await listUpcomingAssignments(course_id, days);
+    const assignments = await getUpcomingAssignments({
+      courseId: course_id,
+      days,
+    });
 
-    const simplified = assignments.map((a) => ({
-      id: a.id,
-      name: a.name,
-      due_at: a.due_at,
-      points: a.points_possible,
-      submitted: a.submission?.submitted_at ? true : false,
-      url: a.html_url,
-    }));
-
-    return jsonResponse(simplified);
+    return jsonResponse(assignments);
   },
 };

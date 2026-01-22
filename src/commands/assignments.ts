@@ -4,15 +4,10 @@
  */
 
 import { Command } from "@cliffy/command";
-import { listCourses } from "../api/courses.ts";
-import {
-  listAssignments,
-  listAssignmentsDueThisWeek,
-  listUpcomingAssignments,
-} from "../api/assignments.ts";
-import { output, formatDate } from "../utils/output.ts";
+import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import type { OutputFormat, Assignment } from "../types/canvas.ts";
+import { listAssignments, type AssignmentBucket } from "../services/index.ts";
+import type { OutputFormat } from "../types/canvas.ts";
 
 export const assignmentsCommand = new Command()
   .name("assignments")
@@ -29,7 +24,7 @@ export const assignmentsCommand = new Command()
   .option("--upcoming [days:number]", "Only show upcoming assignments (default: 7 days)")
   .option(
     "--bucket <bucket:string>",
-    "Filter by bucket: past, overdue, undated, ungraded, unsubmitted, upcoming, future"
+    "Filter by bucket: past, overdue, undated, ungraded, unsubmitted, upcoming, future",
   )
   .action(async (options) => {
     await ensureClient();
@@ -42,89 +37,25 @@ export const assignmentsCommand = new Command()
       Deno.exit(1);
     }
 
-    let assignments: Assignment[] = [];
-
-    if (allCourses) {
-      // Fetch from all courses
-      const courses = await listCourses({
-        enrollment_state: "active",
-        state: ["available"],
-      });
-
-      for (const course of courses) {
-        let courseAssignments: Assignment[];
-
-        if (options.dueThisWeek) {
-          courseAssignments = await listAssignmentsDueThisWeek(course.id);
-        } else if (options.upcoming !== undefined) {
-          const days = typeof options.upcoming === "number" ? options.upcoming : 7;
-          courseAssignments = await listUpcomingAssignments(course.id, days);
-        } else {
-          courseAssignments = await listAssignments({
-            course_id: course.id,
-            bucket: options.bucket as
-              | "past"
-              | "overdue"
-              | "undated"
-              | "ungraded"
-              | "unsubmitted"
-              | "upcoming"
-              | "future"
-              | undefined,
-            include: ["submission"],
-            order_by: "due_at",
-          });
-        }
-
-        // Add course name to each assignment for context
-        assignments.push(
-          ...courseAssignments.map((a) => ({
-            ...a,
-            _course_name: course.name,
-          }))
-        );
-      }
-    } else {
-      // Fetch from specific course
-      if (options.dueThisWeek) {
-        assignments = await listAssignmentsDueThisWeek(courseId!);
-      } else if (options.upcoming !== undefined) {
-        const days = typeof options.upcoming === "number" ? options.upcoming : 7;
-        assignments = await listUpcomingAssignments(courseId!, days);
-      } else {
-        assignments = await listAssignments({
-          course_id: courseId!,
-          bucket: options.bucket as
-            | "past"
-            | "overdue"
-            | "undated"
-            | "ungraded"
-            | "unsubmitted"
-            | "upcoming"
-            | "future"
-            | undefined,
-          include: ["submission"],
-          order_by: "due_at",
-        });
-      }
-    }
-
-    // Sort by due date
-    assignments.sort((a, b) => {
-      if (!a.due_at) return 1;
-      if (!b.due_at) return -1;
-      return new Date(a.due_at).getTime() - new Date(b.due_at).getTime();
+    const assignments = await listAssignments({
+      courseId,
+      allCourses,
+      dueThisWeek: options.dueThisWeek,
+      upcoming: options.upcoming !== undefined
+        ? (typeof options.upcoming === "number" ? options.upcoming : 7)
+        : undefined,
+      bucket: options.bucket as AssignmentBucket | undefined,
     });
 
     output(assignments, format, {
       headers: ["Course", "Assignment", "Due Date", "Points", "Submitted", "URL"],
-      rowMapper: (item: Assignment & { _course_name?: string }) => [
-        item._course_name || `Course ${item.course_id}`,
+      rowMapper: (item) => [
+        item.course_name,
         item.name,
         formatDate(item.due_at),
         item.points_possible,
-        item.submission?.submitted_at ? "Yes" : "No",
-        item.html_url,
+        item.submitted ? "Yes" : "No",
+        item.url,
       ],
     });
   });

@@ -4,10 +4,10 @@
  */
 
 import { Command } from "@cliffy/command";
-import { getUpcomingEvents } from "../api/users.ts";
-import { output, formatDate } from "../utils/output.ts";
+import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import type { OutputFormat, UpcomingEvent } from "../types/canvas.ts";
+import { getUpcomingEvents } from "../services/index.ts";
+import type { OutputFormat } from "../types/canvas.ts";
 
 export const upcomingCommand = new Command()
   .name("upcoming")
@@ -25,47 +25,21 @@ export const upcomingCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
-    const studentId = options.student;
-    const days = options.days;
-    const typeFilter = options.type;
 
-    let events = await getUpcomingEvents(studentId);
-
-    // Filter by date range
-    const now = new Date();
-    const cutoff = new Date(now);
-    cutoff.setDate(cutoff.getDate() + days);
-
-    events = events.filter((event) => {
-      const eventDate = new Date(event.start_at);
-      return eventDate >= now && eventDate <= cutoff;
+    const events = await getUpcomingEvents({
+      studentId: options.student,
+      days: options.days,
+      typeFilter: options.type as "assignment" | "event" | undefined,
     });
 
-    // Filter by type if specified
-    if (typeFilter) {
-      events = events.filter((event) => event.type === typeFilter);
-    }
-
-    // Sort by start date
-    events.sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime());
-
-    // Extract course name from context_code (format: "course_12345")
-    const eventsWithCourse = events.map((event) => {
-      const courseMatch = event.context_code?.match(/course_(\d+)/);
-      return {
-        ...event,
-        _course_id: courseMatch ? parseInt(courseMatch[1], 10) : null,
-      };
-    });
-
-    output(eventsWithCourse, format, {
+    output(events, format, {
       headers: ["Type", "Title", "Start", "Course ID", "URL"],
-      rowMapper: (item: UpcomingEvent & { _course_id: number | null }) => [
+      rowMapper: (item) => [
         item.type,
         item.title,
         formatDate(item.start_at),
-        item._course_id,
-        item.html_url,
+        item.course_id,
+        item.url,
       ],
     });
   });

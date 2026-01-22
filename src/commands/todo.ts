@@ -4,10 +4,10 @@
  */
 
 import { Command } from "@cliffy/command";
-import { getPlannerItems } from "../api/users.ts";
-import { output, formatDate } from "../utils/output.ts";
+import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import type { OutputFormat, PlannerItem } from "../types/canvas.ts";
+import { getTodoItems } from "../services/index.ts";
+import type { OutputFormat } from "../types/canvas.ts";
 
 export const todoCommand = new Command()
   .name("todo")
@@ -27,48 +27,16 @@ export const todoCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
-    const studentId = options.student;
 
-    // Calculate date range
-    const startDate = options.start || new Date().toISOString().split("T")[0];
-    let endDate = options.end;
-    if (!endDate) {
-      const end = new Date();
-      end.setDate(end.getDate() + options.days);
-      endDate = end.toISOString().split("T")[0];
-    }
-
-    const items = await getPlannerItems({
-      studentId,
-      startDate,
-      endDate,
+    const items = await getTodoItems({
+      studentId: options.student,
+      days: options.days,
+      startDate: options.start,
+      endDate: options.end,
+      hideSubmitted: options.hideSubmitted,
     });
 
-    // Filter out submitted items if requested
-    let filteredItems = items;
-    if (options.hideSubmitted) {
-      filteredItems = items.filter((item) => !item.submissions?.submitted);
-    }
-
-    // Sort by due date
-    filteredItems.sort((a, b) => {
-      return new Date(a.plannable_date).getTime() - new Date(b.plannable_date).getTime();
-    });
-
-    // Transform for output
-    const outputItems = filteredItems.map((item) => ({
-      course_name: item.context_name,
-      title: item.plannable.title,
-      type: item.plannable_type,
-      due_at: item.plannable_date,
-      points: item.plannable.points_possible,
-      submitted: item.submissions?.submitted || false,
-      missing: item.submissions?.missing || false,
-      graded: item.submissions?.graded || false,
-      html_url: item.html_url,
-    }));
-
-    output(outputItems, format, {
+    output(items, format, {
       headers: ["Course", "Title", "Type", "Due", "Points", "Status"],
       rowMapper: (item) => {
         let status = "pending";
@@ -80,7 +48,7 @@ export const todoCommand = new Command()
           item.title,
           item.type,
           formatDate(item.due_at),
-          item.points ?? "-",
+          item.points_possible ?? "-",
           status,
         ];
       },

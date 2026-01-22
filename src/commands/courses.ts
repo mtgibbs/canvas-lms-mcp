@@ -4,10 +4,10 @@
  */
 
 import { Command } from "@cliffy/command";
-import { listCoursesWithGrades } from "../api/courses.ts";
-import { output, formatGrade } from "../utils/output.ts";
+import { formatGrade, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import type { OutputFormat, CourseWithGrade } from "../types/canvas.ts";
+import { getCourses } from "../services/index.ts";
+import type { OutputFormat } from "../types/canvas.ts";
 
 export const coursesCommand = new Command()
   .name("courses")
@@ -21,24 +21,12 @@ export const coursesCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
-    const studentId = options.student;
 
-    const courses = await listCoursesWithGrades(studentId);
+    const courses = await getCourses({ studentId: options.student });
 
-    // Transform to a cleaner output format
-    const coursesWithGrades: CourseWithGrade[] = courses.map((course) => ({
-      id: course.id,
-      name: course.name,
-      course_code: course.course_code,
-      current_grade: course.enrollment?.grades?.current_grade || null,
-      current_score: course.enrollment?.grades?.current_score || null,
-      final_grade: course.enrollment?.grades?.final_grade || null,
-      final_score: course.enrollment?.grades?.final_score || null,
-    }));
-
-    output(coursesWithGrades, format, {
+    output(courses, format, {
       headers: ["ID", "Course", "Code", "Grade", "Score"],
-      rowMapper: (course: CourseWithGrade) => [
+      rowMapper: (course) => [
         course.id,
         course.name,
         course.course_code,

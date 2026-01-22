@@ -6,11 +6,8 @@
 import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
+import { getStats, type CourseStats } from "../services/index.ts";
 import type { OutputFormat } from "../types/canvas.ts";
-import { getStudentStats, type CourseStats } from "../api/stats.ts";
-
-// Re-export for backwards compatibility
-export { getStudentStats, type CourseStats } from "../api/stats.ts";
 
 export const statsCommand = new Command()
   .name("stats")
@@ -25,13 +22,11 @@ export const statsCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
-    const studentId = options.student;
 
-    let stats = await getStudentStats(studentId);
-
-    if (options.hideEmpty) {
-      stats = stats.filter((s) => s.total > 0);
-    }
+    const stats = await getStats({
+      studentId: options.student,
+      hideEmpty: options.hideEmpty,
+    });
 
     output(stats, format, {
       headers: ["Course", "Total", "Late", "Missing", "Late%", "Missing%"],

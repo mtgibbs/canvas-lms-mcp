@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { getStudentStats } from "../../api/stats.ts";
+import { getStats } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -23,11 +23,10 @@ export const getStatsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, hide_empty }) => {
-    let stats = await getStudentStats(student_id);
-
-    if (hide_empty) {
-      stats = stats.filter((s) => s.total > 0);
-    }
+    const stats = await getStats({
+      studentId: student_id,
+      hideEmpty: hide_empty,
+    });
 
     return jsonResponse(stats);
   },

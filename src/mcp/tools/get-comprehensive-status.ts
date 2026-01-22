@@ -1,0 +1,46 @@
+/**
+ * Tool: get_comprehensive_status
+ * Get a complete academic status overview in a single call
+ * Combines courses, grades, missing work, and upcoming assignments
+ */
+
+import { z } from "zod";
+import { getComprehensiveStatus } from "../../services/index.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
+
+export const schema = {
+  student_id: z.string().describe("Student ID"),
+  days_upcoming: z
+    .number()
+    .optional()
+    .default(7)
+    .describe("Number of days to look ahead for upcoming assignments (default: 7)"),
+  days_grades: z
+    .number()
+    .optional()
+    .default(14)
+    .describe("Number of days to look back for recent grades (default: 14)"),
+  low_grade_threshold: z
+    .number()
+    .optional()
+    .default(70)
+    .describe("Percentage threshold for flagging low grades (default: 70)"),
+};
+
+export const getComprehensiveStatusTool: ToolDefinition<typeof schema> = {
+  name: "get_comprehensive_status",
+  description:
+    "Get a complete academic status overview: courses with current grades, missing assignments, upcoming due dates, and recent low grades. Use this for daily check-ins or comprehensive status reports.",
+  schema,
+  annotations: { readOnlyHint: true, openWorldHint: true },
+  handler: async ({ student_id, days_upcoming, days_grades, low_grade_threshold }) => {
+    const status = await getComprehensiveStatus({
+      studentId: student_id,
+      daysUpcoming: days_upcoming,
+      daysGrades: days_grades,
+      lowGradeThreshold: low_grade_threshold,
+    });
+
+    return jsonResponse(status);
+  },
+};

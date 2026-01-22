@@ -4,12 +4,14 @@
  */
 
 import { Command } from "@cliffy/command";
-import { getMissingSubmissions, getMissingCountsByCourse } from "../api/users.ts";
-import { listUnsubmittedPastDueForStudent } from "../api/submissions.ts";
-import { listCourses } from "../api/courses.ts";
-import { output, formatDate } from "../utils/output.ts";
+import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import type { OutputFormat, MissingSubmission } from "../types/canvas.ts";
+import {
+  getMissingAssignments,
+  getMissingCountsByCourse,
+  getUnsubmittedAssignments,
+} from "../services/index.ts";
+import type { OutputFormat } from "../types/canvas.ts";
 
 export const missingCommand = new Command()
   .name("missing")
@@ -21,46 +23,36 @@ export const missingCommand = new Command()
     default: "self",
   })
   .option("-c, --course-id <id:number>", "Filter by course ID")
-  .option("--summary", "Show summary count by course instead of individual assignments")
+  .option(
+    "--summary",
+    "Show summary count by course instead of individual assignments",
+  )
   .option(
     "--include-unsubmitted",
-    "Also include unsubmitted past-due assignments not yet flagged as missing"
+    "Also include unsubmitted past-due assignments not yet flagged as missing",
   )
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
-    const studentId = options.student;
-    const courseId = options.courseId;
 
     if (options.summary) {
       // Show summary counts by course
       const counts = await getMissingCountsByCourse({
-        studentId,
-        courseIds: courseId ? [courseId] : undefined,
+        studentId: options.student,
+        courseId: options.courseId,
       });
 
-      const summaryData = Array.from(counts.entries()).map(([id, data]) => ({
-        course_id: id,
-        course_name: data.courseName,
-        missing_count: data.count,
-      }));
-
-      output(summaryData, format, {
+      output(counts, format, {
         headers: ["Course ID", "Course Name", "Missing Count"],
-        rowMapper: (item: { course_id: number; course_name: string; missing_count: number }) => [
-          item.course_id,
-          item.course_name,
-          item.missing_count,
-        ],
+        rowMapper: (item) => [item.course_id, item.course_name, item.count],
       });
       return;
     }
 
     // Get Canvas-flagged missing submissions
-    const missing = await getMissingSubmissions({
-      studentId,
-      courseIds: courseId ? [courseId] : undefined,
-      include: ["course"],
+    const missing = await getMissingAssignments({
+      studentId: options.student,
+      courseId: options.courseId,
     });
 
     // Convert to common format for output
@@ -70,63 +62,43 @@ export const missingCommand = new Command()
       name: string;
       due_at: string | null;
       points_possible: number | null;
-      html_url: string;
+      url: string;
       source: "missing" | "unsubmitted";
     };
 
     const results: OutputItem[] = missing.map((item) => ({
-      course_name: item.course?.name || `Course ${item.course_id}`,
+      course_name: item.course_name,
       course_id: item.course_id,
       name: item.name,
       due_at: item.due_at,
       points_possible: item.points_possible,
-      html_url: item.html_url,
+      url: item.url,
       source: "missing" as const,
     }));
 
-    // If --include-unsubmitted, also check for unsubmitted past-due assignments
-    // This uses the submissions endpoint to get the student's actual submission status
+    // If --include-unsubmitted, also add unsubmitted past-due assignments
     if (options.includeUnsubmitted) {
-      const courseIds: number[] = [];
+      const unsubmitted = await getUnsubmittedAssignments({
+        studentId: options.student,
+        courseId: options.courseId,
+      });
 
-      if (courseId) {
-        courseIds.push(courseId);
-      } else {
-        // Get all courses
-        const courses = await listCourses({
-          enrollment_state: "active",
-          state: ["available"],
-        });
-        courseIds.push(...courses.map((c) => c.id));
-      }
-
-      // Get unsubmitted past-due for each course
+      // Dedupe by course_id + name
       const existingIds = new Set(results.map((r) => `${r.course_id}-${r.name}`));
 
-      for (const cid of courseIds) {
-        try {
-          const unsubmitted = await listUnsubmittedPastDueForStudent(cid, studentId);
-          for (const sub of unsubmitted) {
-            const assignment = sub.assignment;
-            if (!assignment) continue;
-
-            // Skip if already in missing list
-            const key = `${assignment.course_id}-${assignment.name}`;
-            if (existingIds.has(key)) continue;
-
-            results.push({
-              course_name: `Course ${assignment.course_id}`,
-              course_id: assignment.course_id,
-              name: assignment.name,
-              due_at: assignment.due_at,
-              points_possible: assignment.points_possible,
-              html_url: assignment.html_url,
-              source: "unsubmitted",
-            });
-            existingIds.add(key);
-          }
-        } catch {
-          // Skip courses we can't access
+      for (const item of unsubmitted) {
+        const key = `${item.course_id}-${item.name}`;
+        if (!existingIds.has(key)) {
+          results.push({
+            course_name: item.course_name,
+            course_id: item.course_id,
+            name: item.name,
+            due_at: item.due_at,
+            points_possible: item.points_possible,
+            url: item.url || "",
+            source: "unsubmitted",
+          });
+          existingIds.add(key);
         }
       }
     }
@@ -143,8 +115,8 @@ export const missingCommand = new Command()
         item.course_name,
         item.name,
         formatDate(item.due_at),
-        item.points_possible,
-        item.html_url,
+        item.points_possible ?? "-",
+        item.url,
       ],
     });
   });

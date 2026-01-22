@@ -139,6 +139,7 @@ export interface Submission {
   user_id: number;
   submission_type: SubmissionType | null;
   submitted_at: string | null;
+  graded_at: string | null;
   grade: string | null;
   score: number | null;
   entered_grade: string | null;
@@ -216,7 +217,14 @@ export interface PlannerItem {
   group_id?: number;
   user_id?: number;
   plannable_id: number;
-  plannable_type: "assignment" | "quiz" | "discussion_topic" | "wiki_page" | "planner_note" | "calendar_event" | "announcement";
+  plannable_type:
+    | "assignment"
+    | "quiz"
+    | "discussion_topic"
+    | "wiki_page"
+    | "planner_note"
+    | "calendar_event"
+    | "announcement";
   planner_override: PlannerOverride | null;
   new_activity: boolean;
   submissions?: PlannerSubmissionStatus;

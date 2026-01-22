@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { listAssignments } from "../../api/assignments.ts";
+import { listAssignments, type AssignmentBucket } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -23,23 +23,11 @@ export const listAssignmentsTool: ToolDefinition<typeof schema> = {
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ course_id, bucket, search_term }) => {
     const assignments = await listAssignments({
-      course_id,
-      bucket: bucket,
-      search_term,
-      include: ["submission"],
+      courseId: course_id,
+      bucket: bucket as AssignmentBucket | undefined,
+      searchTerm: search_term,
     });
 
-    const simplified = assignments.map((a) => ({
-      id: a.id,
-      name: a.name,
-      due_at: a.due_at,
-      bucket: bucket || "all",
-      score: a.submission?.score,
-      grade: a.submission?.grade,
-      submitted: !!a.submission?.submitted_at,
-      url: a.html_url,
-    }));
-
-    return jsonResponse(simplified);
+    return jsonResponse(assignments);
   },
 };
