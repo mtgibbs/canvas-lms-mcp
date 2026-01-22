@@ -15,7 +15,7 @@ export async function listUserEnrollments(
     type?: string[];
     state?: string[];
     include?: string[];
-  }
+  },
 ): Promise<Enrollment[]> {
   const client = getClient();
 
@@ -38,7 +38,7 @@ export async function listUserEnrollments(
  * Get active student enrollments with grades
  */
 export async function getActiveEnrollmentsWithGrades(
-  userId: string | number = "self"
+  userId: string | number = "self",
 ): Promise<Enrollment[]> {
   return listUserEnrollments(userId, {
     type: ["StudentEnrollment"],

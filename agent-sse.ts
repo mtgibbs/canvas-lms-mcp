@@ -8,7 +8,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { z } from "zod";
 
 import { ensureClient } from "./src/utils/init.ts";
-import { listCoursesWithGrades, listCourses } from "./src/api/courses.ts";
+import { listCourses, listCoursesWithGrades } from "./src/api/courses.ts";
 import { getMissingSubmissions, getPlannerItems } from "./src/api/users.ts";
 import {
   listAssignments,
@@ -35,7 +35,7 @@ server.tool(
   async ({ student_id }: { student_id?: string }) => {
     const courses = await listCoursesWithGrades(student_id || "self");
 
-    const simplified = courses.map(c => ({
+    const simplified = courses.map((c) => ({
       id: c.id,
       name: c.name,
       code: c.course_code,
@@ -48,7 +48,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(simplified, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: Get Missing Assignments
@@ -66,19 +66,19 @@ server.tool(
       include: ["course"],
     });
 
-    const simplified = missing.map(m => ({
+    const simplified = missing.map((m) => ({
       id: m.id,
       name: m.name,
       course: m.course?.name,
       due_at: m.due_at,
       points_possible: m.points_possible,
-      url: m.html_url
+      url: m.html_url,
     }));
 
     return {
       content: [{ type: "text", text: JSON.stringify(simplified, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: Get Unsubmitted Past-Due Assignments
@@ -87,7 +87,9 @@ server.tool(
   "Get assignments that are past due but not submitted (catches items Canvas hasn't flagged as missing yet)",
   {
     student_id: z.string().describe("Student ID (required for this endpoint)"),
-    course_id: z.number().optional().describe("Filter by specific course ID (if omitted, checks all courses)"),
+    course_id: z.number().optional().describe(
+      "Filter by specific course ID (if omitted, checks all courses)",
+    ),
   },
   async ({ student_id, course_id }: { student_id: string; course_id?: number }) => {
     const courseIds: number[] = [];
@@ -99,7 +101,7 @@ server.tool(
         enrollment_state: "active",
         state: ["available"],
       });
-      courseIds.push(...courses.map(c => c.id));
+      courseIds.push(...courses.map((c) => c.id));
     }
 
     const results: Array<{
@@ -139,7 +141,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: Get Upcoming Assignments (single course)
@@ -153,19 +155,19 @@ server.tool(
   async ({ course_id, days }: { course_id: number; days: number }) => {
     const assignments = await listUpcomingAssignments(course_id, days);
 
-    const simplified = assignments.map(a => ({
+    const simplified = assignments.map((a) => ({
       id: a.id,
       name: a.name,
       due_at: a.due_at,
       points: a.points_possible,
       submitted: a.submission?.submitted_at ? true : false,
-      url: a.html_url
+      url: a.html_url,
     }));
 
     return {
       content: [{ type: "text", text: JSON.stringify(simplified, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: Get Due This Week (all courses)
@@ -237,7 +239,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: List Assignments (General Search)
@@ -246,18 +248,25 @@ server.tool(
   "List assignments for a course with optional filtering",
   {
     course_id: z.number().describe("Course ID"),
-    bucket: z.enum(["past", "overdue", "undated", "ungraded", "unsubmitted", "upcoming", "future"]).optional().describe("Filter by bucket"),
+    bucket: z.enum(["past", "overdue", "undated", "ungraded", "unsubmitted", "upcoming", "future"])
+      .optional().describe("Filter by bucket"),
     search_term: z.string().optional().describe("Search by assignment name"),
   },
-  async ({ course_id, bucket, search_term }: { course_id: number; bucket?: "past" | "overdue" | "undated" | "ungraded" | "unsubmitted" | "upcoming" | "future"; search_term?: string }) => {
+  async (
+    { course_id, bucket, search_term }: {
+      course_id: number;
+      bucket?: "past" | "overdue" | "undated" | "ungraded" | "unsubmitted" | "upcoming" | "future";
+      search_term?: string;
+    },
+  ) => {
     const assignments = await listAssignments({
       course_id,
       bucket: bucket,
       search_term,
-      include: ["submission"]
+      include: ["submission"],
     });
 
-    const simplified = assignments.map(a => ({
+    const simplified = assignments.map((a) => ({
       id: a.id,
       name: a.name,
       due_at: a.due_at,
@@ -265,13 +274,13 @@ server.tool(
       score: a.submission?.score,
       grade: a.submission?.grade,
       submitted: !!a.submission?.submitted_at,
-      url: a.html_url
+      url: a.html_url,
     }));
 
     return {
       content: [{ type: "text", text: JSON.stringify(simplified, null, 2) }],
     };
-  }
+  },
 );
 
 // Tool: Get Todo (Planner Items)
@@ -281,9 +290,17 @@ server.tool(
   {
     student_id: z.string().describe("Student ID"),
     days: z.number().optional().default(7).describe("Number of days to look ahead (default: 7)"),
-    hide_submitted: z.boolean().optional().default(false).describe("Hide items that have been submitted"),
+    hide_submitted: z.boolean().optional().default(false).describe(
+      "Hide items that have been submitted",
+    ),
   },
-  async ({ student_id, days, hide_submitted }: { student_id: string; days: number; hide_submitted: boolean }) => {
+  async (
+    { student_id, days, hide_submitted }: {
+      student_id: string;
+      days: number;
+      hide_submitted: boolean;
+    },
+  ) => {
     const startDate = new Date().toISOString().split("T")[0];
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + days);
@@ -319,7 +336,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify(simplified, null, 2) }],
     };
-  }
+  },
 );
 
 // --- SSE HTTP Server ---

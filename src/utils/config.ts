@@ -39,14 +39,14 @@ export async function loadConfig(): Promise<Config> {
   if (!apiToken) {
     throw new Error(
       "CANVAS_API_TOKEN is required. Set it in .env or as an environment variable.\n" +
-        "Generate a token at: Canvas > Account > Settings > Approved Integrations > New Access Token"
+        "Generate a token at: Canvas > Account > Settings > Approved Integrations > New Access Token",
     );
   }
 
   if (!baseUrl) {
     throw new Error(
       "CANVAS_BASE_URL is required. Set it in .env or as an environment variable.\n" +
-        "Example: https://yourschool.instructure.com"
+        "Example: https://yourschool.instructure.com",
     );
   }
 

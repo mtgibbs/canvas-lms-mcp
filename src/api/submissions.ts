@@ -3,7 +3,7 @@
  */
 
 import { getClient } from "./client.ts";
-import type { Submission, ListSubmissionsOptions } from "../types/canvas.ts";
+import type { ListSubmissionsOptions, Submission } from "../types/canvas.ts";
 
 /**
  * List submissions for a course (all students or specific students)
@@ -40,7 +40,7 @@ export async function getSubmission(
   courseId: number,
   assignmentId: number,
   userId: number | string,
-  include?: Array<"submission_history" | "submission_comments" | "rubric_assessment">
+  include?: Array<"submission_history" | "submission_comments" | "rubric_assessment">,
 ): Promise<Submission> {
   const client = getClient();
 
@@ -51,7 +51,7 @@ export async function getSubmission(
 
   return client.get<Submission>(
     `/courses/${courseId}/assignments/${assignmentId}/submissions/${userId}`,
-    params
+    params,
   );
 }
 
@@ -64,7 +64,7 @@ export async function listUserSubmissions(
   options?: {
     include?: Array<"submission_history" | "submission_comments" | "assignment" | "user">;
     workflowState?: "submitted" | "unsubmitted" | "graded" | "pending_review";
-  }
+  },
 ): Promise<Submission[]> {
   return listSubmissions({
     course_id: courseId,
@@ -79,14 +79,14 @@ export async function listUserSubmissions(
  */
 export async function listGradedSubmissions(
   courseId: number,
-  userId: number | string
+  userId: number | string,
 ): Promise<Submission[]> {
   const submissions = await listUserSubmissions(courseId, userId, {
     include: ["assignment"],
   });
 
   return submissions.filter(
-    (sub) => sub.workflow_state === "graded" && sub.grade !== null
+    (sub) => sub.workflow_state === "graded" && sub.grade !== null,
   );
 }
 
@@ -96,7 +96,7 @@ export async function listGradedSubmissions(
 export async function listSubmissionsBelowThreshold(
   courseId: number,
   userId: number | string,
-  threshold: number
+  threshold: number,
 ): Promise<Submission[]> {
   const submissions = await listGradedSubmissions(courseId, userId);
 
@@ -116,7 +116,7 @@ export async function listSubmissionsBelowThreshold(
  */
 export async function listUnsubmittedPastDueForStudent(
   courseId: number,
-  studentId: number | string
+  studentId: number | string,
 ): Promise<Submission[]> {
   const submissions = await listUserSubmissions(courseId, studentId, {
     include: ["assignment"],

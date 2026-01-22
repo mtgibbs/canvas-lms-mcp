@@ -105,11 +105,11 @@ import "./agent.js";
     // Remove the @std/dotenv import and the load() call since dotenv/config handles it
     configContent = configContent.replace(
       'import { load } from "@std/dotenv";',
-      "// dotenv is loaded via cli.js wrapper"
+      "// dotenv is loaded via cli.js wrapper",
     );
     configContent = configContent.replace(
       /\/\/ Try to load \.env file.*?\n\s*try \{\s*\n\s*await load\(\{ export: true \}\);\s*\n\s*\}\s*\n\s*catch \{\s*\n\s*\/\/ \.env file doesn't exist.*?\n\s*\}/s,
-      "// dotenv is loaded via cli.js wrapper (dotenv/config)"
+      "// dotenv is loaded via cli.js wrapper (dotenv/config)",
     );
     await Deno.writeTextFile(configPath, configContent);
 
@@ -127,7 +127,8 @@ import "./agent.js";
       version,
       description:
         "Connect Claude to your Canvas LMS account to query grades, assignments, missing work, and more.",
-      long_description: `An MCP server that connects AI assistants like Claude to your Canvas LMS account. Perfect for parents monitoring their child's academic progress, students tracking their own work, or anyone who wants to interact with Canvas data through natural language.
+      long_description:
+        `An MCP server that connects AI assistants like Claude to your Canvas LMS account. Perfect for parents monitoring their child's academic progress, students tracking their own work, or anyone who wants to interact with Canvas data through natural language.
 
 Ask Claude things like:
 - What assignments are due this week?
@@ -184,9 +185,18 @@ Ask Claude things like:
       },
       tools: [
         { name: "get_courses", description: "List all courses with current grades" },
-        { name: "get_missing_assignments", description: "Get assignments flagged as missing by Canvas" },
-        { name: "get_unsubmitted_past_due", description: "Get past-due assignments not yet submitted" },
-        { name: "get_upcoming_assignments", description: "Get assignments due soon for a specific course" },
+        {
+          name: "get_missing_assignments",
+          description: "Get assignments flagged as missing by Canvas",
+        },
+        {
+          name: "get_unsubmitted_past_due",
+          description: "Get past-due assignments not yet submitted",
+        },
+        {
+          name: "get_upcoming_assignments",
+          description: "Get assignments due soon for a specific course",
+        },
         { name: "get_due_this_week", description: "Get all assignments due across all courses" },
         { name: "list_assignments", description: "Search and filter assignments by status" },
         { name: "get_stats", description: "Get late/missing statistics by course" },

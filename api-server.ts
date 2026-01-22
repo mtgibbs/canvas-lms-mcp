@@ -4,7 +4,7 @@
  */
 
 import { ensureClient } from "./src/utils/init.ts";
-import { listCoursesWithGrades, listCourses } from "./src/api/courses.ts";
+import { listCourses, listCoursesWithGrades } from "./src/api/courses.ts";
 import { getMissingSubmissions, getPlannerItems } from "./src/api/users.ts";
 import { listSubmissions, listUnsubmittedPastDueForStudent } from "./src/api/submissions.ts";
 import { getStudentStats } from "./src/commands/stats.ts";
@@ -59,7 +59,7 @@ async function handler(req: Request): Promise<Response> {
       const studentId = url.searchParams.get("student_id") || "self";
       const courses = await listCoursesWithGrades(studentId);
 
-      const simplified = courses.map(c => ({
+      const simplified = courses.map((c) => ({
         id: c.id,
         name: c.name,
         code: c.course_code,
@@ -90,14 +90,14 @@ async function handler(req: Request): Promise<Response> {
 
       let filtered = items;
       if (hideSubmitted) {
-        filtered = items.filter(item => !item.submissions?.submitted);
+        filtered = items.filter((item) => !item.submissions?.submitted);
       }
 
       filtered.sort((a, b) =>
         new Date(a.plannable_date).getTime() - new Date(b.plannable_date).getTime()
       );
 
-      const simplified = filtered.map(item => ({
+      const simplified = filtered.map((item) => ({
         course: item.context_name,
         title: item.plannable.title,
         type: item.plannable_type,
@@ -121,7 +121,7 @@ async function handler(req: Request): Promise<Response> {
         include: ["course"],
       });
 
-      const simplified = missing.map(m => ({
+      const simplified = missing.map((m) => ({
         id: m.id,
         name: m.name,
         course: m.course?.name,
@@ -266,7 +266,12 @@ function getOpenAPISpec() {
           operationId: "getCourses",
           summary: "Get all courses with grades",
           parameters: [
-            { name: "student_id", in: "query", schema: { type: "string" }, description: "Student ID" },
+            {
+              name: "student_id",
+              in: "query",
+              schema: { type: "string" },
+              description: "Student ID",
+            },
           ],
           responses: { "200": { description: "List of courses" } },
         },

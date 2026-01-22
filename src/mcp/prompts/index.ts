@@ -22,9 +22,9 @@ export const prompts: PromptDefinition[] = [
 
 // Re-export individual prompts for direct access if needed
 export {
-  dailyCheckinPrompt,
-  weekPlanningPrompt,
   courseAnalysisPrompt,
+  dailyCheckinPrompt,
   gradeRecoveryPrompt,
   missingWorkAuditPrompt,
+  weekPlanningPrompt,
 };

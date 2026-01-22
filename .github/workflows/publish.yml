@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  id-token: write  # Required for npm trusted publishing (OIDC)
+  id-token: write # Required for npm trusted publishing (OIDC)
 
 jobs:
   publish-npm:

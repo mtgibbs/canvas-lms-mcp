@@ -21,7 +21,7 @@ export function outputTable(
   rows: (string | number | null | undefined)[][],
   options?: {
     maxColWidth?: number;
-  }
+  },
 ): void {
   const { maxColWidth = 50 } = options || {};
 
@@ -59,7 +59,7 @@ export function output<T>(
     headers: string[];
     // deno-lint-ignore no-explicit-any
     rowMapper: (item: any) => (string | number | null | undefined)[];
-  }
+  },
 ): void {
   if (format === "json") {
     outputJson(data);
@@ -98,7 +98,7 @@ export function formatDate(dateStr: string | null | undefined): string {
  */
 export function formatGrade(
   grade: string | null | undefined,
-  score: number | null | undefined
+  score: number | null | undefined,
 ): string {
   if (grade && score !== null && score !== undefined) {
     return `${grade} (${score}%)`;
@@ -115,7 +115,7 @@ export function formatGrade(
 export function isGradeBelow(
   grade: string | null | undefined,
   score: number | null | undefined,
-  threshold: string
+  threshold: string,
 ): boolean {
   // Try to parse threshold as a number first
   const numericThreshold = parseFloat(threshold);

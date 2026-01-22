@@ -46,7 +46,7 @@ export async function listCourseEnrollments(
     type?: string[];
     state?: string[];
     userId?: number | string;
-  }
+  },
 ): Promise<Enrollment[]> {
   const client = getClient();
 
@@ -70,7 +70,7 @@ export async function listCourseEnrollments(
  */
 export async function getUserEnrollment(
   courseId: number,
-  userId: number | string
+  userId: number | string,
 ): Promise<Enrollment | null> {
   const enrollments = await listCourseEnrollments(courseId, {
     userId,
@@ -85,7 +85,7 @@ export async function getUserEnrollment(
  * Enriches course data with enrollment/grade information
  */
 export async function listCoursesWithGrades(
-  userId: string | number = "self"
+  userId: string | number = "self",
 ): Promise<(Course & { enrollment?: Enrollment })[]> {
   // Get all active courses with enrollments included
   const courses = await listCourses({

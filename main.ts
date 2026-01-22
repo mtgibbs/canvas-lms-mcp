@@ -14,6 +14,9 @@ import { gradesCommand } from "./src/commands/grades.ts";
 import { upcomingCommand } from "./src/commands/upcoming.ts";
 import { todoCommand } from "./src/commands/todo.ts";
 import { statsCommand } from "./src/commands/stats.ts";
+import { statusCommand } from "./src/commands/status.ts";
+import { dueCommand } from "./src/commands/due.ts";
+import { unsubmittedCommand } from "./src/commands/unsubmitted.ts";
 
 const VERSION = "0.1.0";
 
@@ -23,7 +26,7 @@ const cli = new Command()
   .version(VERSION)
   .description(
     "Canvas LMS CLI - Query courses, grades, assignments, and more from Canvas.\n\n" +
-      "Configure by setting CANVAS_API_TOKEN and CANVAS_BASE_URL in .env or environment."
+      "Configure by setting CANVAS_API_TOKEN and CANVAS_BASE_URL in .env or environment.",
   )
   .globalOption("-f, --format <format:string>", "Output format: json (default) or table", {
     default: "json",
@@ -38,7 +41,10 @@ const cli = new Command()
   .command("grades", gradesCommand)
   .command("upcoming", upcomingCommand)
   .command("todo", todoCommand)
-  .command("stats", statsCommand);
+  .command("stats", statsCommand)
+  .command("status", statusCommand)
+  .command("due", dueCommand)
+  .command("unsubmitted", unsubmittedCommand);
 
 // Run
 try {

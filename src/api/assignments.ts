@@ -36,7 +36,7 @@ export async function listAssignments(options: ListAssignmentsOptions): Promise<
 export async function getAssignment(
   courseId: number,
   assignmentId: number,
-  include?: Array<"submission" | "assignment_visibility" | "all_dates" | "overrides">
+  include?: Array<"submission" | "assignment_visibility" | "all_dates" | "overrides">,
 ): Promise<Assignment> {
   const client = getClient();
 
@@ -54,7 +54,7 @@ export async function getAssignment(
 export async function listAssignmentsDueInRange(
   courseId: number,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): Promise<Assignment[]> {
   const assignments = await listAssignments({
     course_id: courseId,
@@ -90,7 +90,7 @@ export async function listAssignmentsDueThisWeek(courseId: number): Promise<Assi
  */
 export async function listUpcomingAssignments(
   courseId: number,
-  days: number = 7
+  days: number = 7,
 ): Promise<Assignment[]> {
   const now = new Date();
   const endDate = new Date(now);
@@ -144,7 +144,7 @@ export async function listUnsubmittedPastDue(courseId: number): Promise<Assignme
  * List unsubmitted past-due assignments across multiple courses
  */
 export async function listUnsubmittedPastDueForCourses(
-  courseIds: number[]
+  courseIds: number[],
 ): Promise<(Assignment & { course_name?: string })[]> {
   const results: (Assignment & { course_name?: string })[] = [];
 

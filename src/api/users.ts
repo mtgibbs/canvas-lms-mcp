@@ -4,12 +4,7 @@
  */
 
 import { getClient } from "./client.ts";
-import type {
-  MissingSubmission,
-  UpcomingEvent,
-  Submission,
-  PlannerItem,
-} from "../types/canvas.ts";
+import type { MissingSubmission, PlannerItem, Submission, UpcomingEvent } from "../types/canvas.ts";
 import { listCourses } from "./courses.ts";
 
 /**
@@ -36,7 +31,7 @@ export interface GetMissingOptions {
  * The observed_user_id parameter does NOT work for this endpoint.
  */
 export async function getMissingSubmissions(
-  options?: GetMissingOptions
+  options?: GetMissingOptions,
 ): Promise<MissingSubmission[]> {
   const client = getClient();
   const studentId = options?.studentId ?? "self";
@@ -59,7 +54,9 @@ export async function getMissingSubmissions(
 /**
  * Get upcoming events for a user (assignments and calendar events)
  */
-export async function getUpcomingEvents(userId: string | number = "self"): Promise<UpcomingEvent[]> {
+export async function getUpcomingEvents(
+  userId: string | number = "self",
+): Promise<UpcomingEvent[]> {
   const client = getClient();
   return client.getAll<UpcomingEvent>(`/users/${userId}/upcoming_events`);
 }
@@ -68,11 +65,11 @@ export async function getUpcomingEvents(userId: string | number = "self"): Promi
  * Get todo items for a user (assignments needing submission)
  */
 export async function getTodoItems(
-  userId: string | number = "self"
+  userId: string | number = "self",
 ): Promise<Array<{ assignment: MissingSubmission; context_name: string }>> {
   const client = getClient();
   return client.getAll<{ assignment: MissingSubmission; context_name: string }>(
-    `/users/${userId}/todo`
+    `/users/${userId}/todo`,
   );
 }
 
@@ -83,7 +80,7 @@ export async function getGradedSubmissions(
   userId: string | number = "self",
   options?: {
     onlyPublished?: boolean;
-  }
+  },
 ): Promise<Submission[]> {
   const client = getClient();
 
@@ -99,7 +96,7 @@ export async function getGradedSubmissions(
  * Get missing submissions grouped by course
  */
 export async function getMissingSubmissionsByCourse(
-  options?: GetMissingOptions
+  options?: GetMissingOptions,
 ): Promise<Map<number, MissingSubmission[]>> {
   const missing = await getMissingSubmissions({
     ...options,
@@ -123,7 +120,7 @@ export async function getMissingSubmissionsByCourse(
  * Get count of missing submissions per course
  */
 export async function getMissingCountsByCourse(
-  options?: GetMissingOptions
+  options?: GetMissingOptions,
 ): Promise<Map<number, { courseName: string; count: number }>> {
   const missing = await getMissingSubmissions({
     ...options,
@@ -150,7 +147,7 @@ export async function getMissingCountsByCourse(
  * Returns the list of users that the current user is observing
  */
 export async function getObservedStudents(
-  userId: string | number = "self"
+  userId: string | number = "self",
 ): Promise<import("../types/canvas.ts").User[]> {
   const client = getClient();
   return client.getAll<import("../types/canvas.ts").User>(`/users/${userId}/observees`);
@@ -182,7 +179,7 @@ export interface GetPlannerOptions {
  * fetch active courses and include them as context_codes.
  */
 export async function getPlannerItems(
-  options?: GetPlannerOptions
+  options?: GetPlannerOptions,
 ): Promise<PlannerItem[]> {
   const client = getClient();
   const studentId = options?.studentId;

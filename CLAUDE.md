@@ -1,10 +1,39 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this
+repository.
 
 ## Project Purpose
 
-This project is a Deno CLI tool that wraps the Canvas LMS API, designed for both human use and LLM integration. It enables querying student academic data including grades, assignments, and course information. The primary use case is allowing a parent to discuss their child's academic progress through natural language.
+This project provides **two interfaces** to Canvas LMS:
+
+1. **CLI** (`main.ts`) - Human-friendly command-line tool
+2. **MCP Server** (`agent.ts`) - Model Context Protocol server for AI assistants like Claude
+
+Both interfaces share the same API layer (`src/api/`) and should have **feature parity**.
+
+## CRITICAL: CLI/MCP Parity
+
+**When adding or modifying functionality, ALWAYS update BOTH interfaces:**
+
+| CLI Command   | MCP Tool                   | Description                          |
+| ------------- | -------------------------- | ------------------------------------ |
+| `courses`     | `get_courses`              | List courses with grades             |
+| `missing`     | `get_missing_assignments`  | Canvas-flagged missing work          |
+| `assignments` | `list_assignments`         | Filter/search assignments            |
+| `grades`      | `get_recent_grades`        | Graded submissions with scores       |
+| `upcoming`    | `get_upcoming_assignments` | Assignments due soon (single course) |
+| `todo`        | `get_todo`                 | Planner items                        |
+| `stats`       | `get_stats`                | Late/missing statistics              |
+| `status`      | `get_comprehensive_status` | Full overview (all data in one call) |
+| `due`         | `get_due_this_week`        | Upcoming across ALL courses          |
+| `unsubmitted` | `get_unsubmitted_past_due` | Past-due but not submitted           |
+
+**Before completing any feature work:**
+
+1. Check if the feature exists in both CLI and MCP
+2. If adding to one, add to the other
+3. Update this table if adding new commands/tools
 
 ## Development Commands
 
@@ -12,16 +41,19 @@ This project is a Deno CLI tool that wraps the Canvas LMS API, designed for both
 # Run CLI in development mode
 deno task dev <command>
 
+# Run MCP server in development
+deno run -A agent.ts
+
 # Examples:
 deno task dev courses
-deno task dev missing --format table
-deno task dev assignments --all-courses --due-this-week
+deno task dev status --format table
+deno task dev grades --all-courses --days 14 --below 70
 
-# Build standalone binary
-deno task build
+# Build npm package (for MCP server distribution)
+deno task build:npm
 
-# Build for all platforms
-deno task build:all
+# Build Desktop Extension (.mcpb)
+deno task build:extension
 
 # Type check
 deno task check
@@ -37,6 +69,10 @@ deno task test
 ## CLI Usage
 
 ```bash
+# Comprehensive status (recommended for daily check-ins)
+canvas status --format table
+canvas status --days-upcoming 7 --days-grades 14 --threshold 70
+
 # List courses with grades
 canvas courses
 canvas courses --format table
@@ -51,10 +87,11 @@ canvas assignments --all-courses --due-this-week
 canvas assignments --course-id 12345 --upcoming 7
 canvas assignments --course-id 12345 --bucket overdue
 
-# List grades/submissions
+# List grades/submissions (with recent date filtering)
 canvas grades --all-courses
-canvas grades --all-courses --below B
-canvas grades --course-id 12345 --below 80
+canvas grades --all-courses --below 70
+canvas grades --all-courses --days 14              # last 14 days only
+canvas grades --all-courses --days 14 --below 70   # recent low grades
 
 # Upcoming events
 canvas upcoming --days 14
@@ -63,20 +100,64 @@ canvas upcoming --days 14
 canvas todo --student 200257 --days 7
 canvas todo --hide-submitted
 
+# Statistics
+canvas stats
+
+# Assignments due soon (across ALL courses)
+canvas due                     # next 7 days, hide graded
+canvas due --days 14           # next 14 days
+canvas due --show-graded       # include already-graded items
+
+# Past-due unsubmitted assignments
+canvas unsubmitted             # all courses
+canvas unsubmitted --course-id 12345
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (default: self)
 ```
 
+## MCP Tools
+
+The MCP server exposes these tools to AI assistants:
+
+| Tool                       | Description                      | Key Parameters                                                         |
+| -------------------------- | -------------------------------- | ---------------------------------------------------------------------- |
+| `get_courses`              | List courses with current grades | `student_id`                                                           |
+| `get_missing_assignments`  | Canvas-flagged missing work      | `student_id`, `course_id?`                                             |
+| `get_unsubmitted_past_due` | Past-due but not submitted       | `student_id`, `course_id?`                                             |
+| `get_upcoming_assignments` | Due soon (single course)         | `student_id`, `course_id`, `days?`                                     |
+| `get_due_this_week`        | Due soon (ALL courses)           | `student_id`, `days?`, `hide_graded?`                                  |
+| `list_assignments`         | Filter/search assignments        | `student_id`, `course_id`, `bucket?`                                   |
+| `get_stats`                | Late/missing statistics          | `student_id`                                                           |
+| `get_todo`                 | Planner items                    | `student_id`, `days?`                                                  |
+| `get_recent_grades`        | Graded with scores               | `student_id`, `days?`, `below_percentage?`                             |
+| `get_comprehensive_status` | **Full overview**                | `student_id`, `days_upcoming?`, `days_grades?`, `low_grade_threshold?` |
+
+**Recommended for daily check-ins:** Use `get_comprehensive_status` - it returns courses, grades,
+missing work, upcoming assignments, and recent low grades in a single call.
+
 ## Architecture
 
 ```
 src/
-├── api/           # Canvas API client and endpoint modules
+├── api/           # Canvas API client (shared by CLI and MCP)
 │   ├── client.ts  # HTTP client with auth and pagination
 │   ├── courses.ts, assignments.ts, submissions.ts, users.ts, enrollments.ts
 ├── commands/      # CLI commands (Cliffy)
-│   ├── courses.ts, missing.ts, assignments.ts, grades.ts, upcoming.ts, todo.ts
+│   ├── courses.ts, missing.ts, assignments.ts, grades.ts
+│   ├── upcoming.ts, todo.ts, stats.ts, status.ts
+│   ├── due.ts, unsubmitted.ts
+├── mcp/           # MCP server components
+│   ├── server.ts  # Server setup and tool registration
+│   ├── types.ts   # Tool definition types
+│   ├── tools/     # Individual tool implementations
+│   │   ├── get-courses.ts, get-missing-assignments.ts, ...
+│   │   ├── get-recent-grades.ts, get-comprehensive-status.ts
+│   │   └── index.ts  # Tool registry
+│   └── prompts/   # MCP prompts (conversation starters)
+│       ├── daily-checkin.ts, week-planning.ts, ...
+│       └── index.ts
 ├── types/
 │   └── canvas.ts  # TypeScript interfaces for Canvas API
 └── utils/
@@ -85,10 +166,12 @@ src/
 ```
 
 **Key patterns:**
-- `src/api/client.ts` handles auth and pagination; use `getClient()` after initialization
-- Commands use Cliffy for argument parsing
-- Output supports JSON (for LLM parsing) and table (for humans)
-- Use `--student <id>` for observer accounts accessing student data
+
+- `src/api/` is shared - changes here affect both CLI and MCP
+- CLI commands in `src/commands/` use Cliffy for argument parsing
+- MCP tools in `src/mcp/tools/` use Zod schemas for validation
+- All multi-course operations should use `Promise.all` for parallel requests
+- Tools/commands that fetch from all courses should parallelize to reduce latency
 
 ## Environment Variables
 
@@ -108,18 +191,22 @@ CANVAS_STUDENT_ID=self
 
 ### Key Endpoints Used
 
-| Command | Endpoint |
-|---------|----------|
-| courses | `GET /api/v1/courses` with enrollments |
-| missing | `GET /api/v1/users/:id/missing_submissions` |
-| assignments | `GET /api/v1/courses/:id/assignments` |
-| grades | `GET /api/v1/courses/:id/students/submissions` |
-| upcoming | `GET /api/v1/users/:id/upcoming_events` |
-| todo | `GET /api/v1/planner/items` with context_codes |
+| Command/Tool | Endpoint                                       |
+| ------------ | ---------------------------------------------- |
+| courses      | `GET /api/v1/courses` with enrollments         |
+| missing      | `GET /api/v1/users/:id/missing_submissions`    |
+| assignments  | `GET /api/v1/courses/:id/assignments`          |
+| grades       | `GET /api/v1/courses/:id/students/submissions` |
+| upcoming     | `GET /api/v1/users/:id/upcoming_events`        |
+| todo         | `GET /api/v1/planner/items` with context_codes |
 
 ## Important Canvas API Behaviors
 
 1. **Observer Access**: Use `observed_user_id` parameter or `--student` flag for parent accounts
-2. **Rate Limiting**: Canvas enforces rate limits; the client requests 100 items per page to minimize calls
+2. **Rate Limiting**: Canvas enforces rate limits; the client requests 100 items per page to
+   minimize calls
 3. **Timestamps**: ISO 8601 format in UTC
-4. **Assignment Buckets**: Filter assignments by status using `bucket` param (past, overdue, upcoming, etc.)
+4. **Assignment Buckets**: Filter assignments by status using `bucket` param (past, overdue,
+   upcoming, etc.)
+5. **Parallel Requests**: When fetching from multiple courses, always use `Promise.all` to
+   parallelize and reduce total request time

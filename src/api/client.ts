@@ -26,7 +26,10 @@ export class CanvasClient {
   /**
    * Build the full URL for an API endpoint
    */
-  private buildUrl(path: string, params?: Record<string, string | string[] | number | boolean | undefined>): string {
+  private buildUrl(
+    path: string,
+    params?: Record<string, string | string[] | number | boolean | undefined>,
+  ): string {
     const url = new URL(`${this.baseUrl}/api/v1${path}`);
 
     // Add per_page by default for list endpoints
@@ -79,7 +82,7 @@ export class CanvasClient {
       method?: string;
       params?: Record<string, string | string[] | number | boolean | undefined>;
       body?: unknown;
-    }
+    },
   ): Promise<{ data: T; links: PaginationLinks }> {
     const { method = "GET", params, body } = options || {};
     const url = this.buildUrl(path, params);
@@ -133,7 +136,7 @@ export class CanvasClient {
       params?: Record<string, string | string[] | number | boolean | undefined>;
       /** Maximum number of items to fetch (default: unlimited) */
       limit?: number;
-    }
+    },
   ): Promise<T[]> {
     const { params, limit } = options || {};
     const results: T[] = [];
@@ -184,7 +187,7 @@ export class CanvasClient {
    */
   async get<T>(
     path: string,
-    params?: Record<string, string | string[] | number | boolean | undefined>
+    params?: Record<string, string | string[] | number | boolean | undefined>,
   ): Promise<T> {
     const { data } = await this.fetch<T>(path, { params });
     return data;
@@ -195,7 +198,7 @@ export class CanvasClient {
    */
   async getAll<T>(
     path: string,
-    params?: Record<string, string | string[] | number | boolean | undefined>
+    params?: Record<string, string | string[] | number | boolean | undefined>,
   ): Promise<T[]> {
     return this.fetchAll<T>(path, { params });
   }
