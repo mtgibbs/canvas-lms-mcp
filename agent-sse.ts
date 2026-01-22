@@ -20,8 +20,9 @@ const server = createServer();
 // Create Hono app
 const app = new Hono();
 
-// Create the transport
+// Create the transport and connect at startup
 const transport = new StreamableHTTPTransport();
+await server.connect(transport);
 
 // Health check endpoint
 app.get("/health", (c) => {
@@ -29,11 +30,7 @@ app.get("/health", (c) => {
 });
 
 // MCP endpoint - handles all MCP communication
-app.all("/mcp", async (c) => {
-  // Connect server to transport if not already connected
-  if (!server.server.transport) {
-    await server.connect(transport);
-  }
+app.all("/mcp", (c) => {
   return transport.handleRequest(c);
 });
 
