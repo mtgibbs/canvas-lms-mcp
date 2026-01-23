@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.4](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.3...canvas-lms-mcp-v0.2.4) (2026-01-23)
+
+
+### Bug Fixes
+
+* include ci/docs commits in changelog and releases ([4d98ff0](https://github.com/mtgibbs/canvas-lms-mcp/commit/4d98ff0822f371856bdd3db2ef9b16ac0feb5e50))
+
+
+### CI/CD
+
+* auto-trigger publish workflow when release is created ([ad70aef](https://github.com/mtgibbs/canvas-lms-mcp/commit/ad70aef1c1cd808b9f3e57ac067dd9ee13573303))
+
 ## [0.2.3](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.2...canvas-lms-mcp-v0.2.3) (2026-01-23)
 
 
