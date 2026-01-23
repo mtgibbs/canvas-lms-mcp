@@ -1,12 +1,6 @@
 name: Publish
 
 on:
-  workflow_call:
-    inputs:
-      tag:
-        description: "Release tag to publish"
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       tag:
@@ -36,7 +30,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Build npm package
         run: deno task build:npm
@@ -45,8 +38,6 @@ jobs:
         run: |
           cd npm
           npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-extension:
     name: Build and attach extension
