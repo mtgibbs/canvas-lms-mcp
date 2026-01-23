@@ -1,5 +1,6 @@
 /**
  * Type definitions for MCP tools and prompts
+ * Updated for MCP SDK v1.12+
  */
 
 import type { z } from "zod";
@@ -9,6 +10,8 @@ import type { z } from "zod";
  * These hints describe tool behavior for safety and UI purposes
  */
 export interface ToolAnnotations {
+  /** Human-readable title for the tool */
+  title?: string;
   /** If true, the tool does not modify its environment (read-only operation) */
   readOnlyHint?: boolean;
   /** If true, the tool may perform destructive updates */
@@ -17,6 +20,51 @@ export interface ToolAnnotations {
   idempotentHint?: boolean;
   /** If true, tool interacts with external entities */
   openWorldHint?: boolean;
+  /** Allow additional properties for SDK compatibility */
+  [key: string]: unknown;
+}
+
+/**
+ * Text content item in tool response
+ */
+export interface TextContent {
+  type: "text";
+  text: string;
+}
+
+/**
+ * Image content item in tool response
+ */
+export interface ImageContent {
+  type: "image";
+  data: string;
+  mimeType: string;
+}
+
+/**
+ * Resource content item in tool response
+ */
+export interface ResourceContent {
+  type: "resource";
+  resource: {
+    uri: string;
+    text?: string;
+    blob?: string;
+    mimeType?: string;
+  };
+}
+
+/**
+ * Content types supported in tool responses
+ */
+export type ToolContentItem = TextContent | ImageContent | ResourceContent;
+
+/**
+ * Standard tool response format (MCP SDK v1.12+ compatible)
+ */
+export interface ToolResponse {
+  content: ToolContentItem[];
+  isError?: boolean;
 }
 
 /**
@@ -35,20 +83,6 @@ export interface ToolDefinition<T extends z.ZodRawShape = z.ZodRawShape> {
 
 // deno-lint-ignore no-explicit-any
 export type AnyToolDefinition = ToolDefinition<any>;
-
-/**
- * Standard tool response format
- */
-export interface ToolResponse {
-  content: Array<{
-    type: "text" | "image" | "resource";
-    text?: string;
-    data?: string;
-    mimeType?: string;
-    uri?: string;
-  }>;
-  isError?: boolean;
-}
 
 /**
  * Prompt argument definition

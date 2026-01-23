@@ -6,6 +6,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { tools } from "./tools/index.ts";
 import { prompts } from "./prompts/index.ts";
+import type { AnyToolDefinition, ToolResponse } from "./types.ts";
 
 // Read version from deno.json if available
 let version = "1.0.0";
@@ -14,6 +15,17 @@ try {
   version = denoJson.version || version;
 } catch {
   // Use default version if deno.json not found
+}
+
+/**
+ * Adapt our tool handler to the MCP SDK's expected signature
+ * The SDK expects (args, extra) => response, but extra is optional
+ */
+function adaptToolHandler(handler: AnyToolDefinition["handler"]) {
+  // deno-lint-ignore no-explicit-any
+  return async (args: any, _extra: unknown): Promise<ToolResponse> => {
+    return await handler(args);
+  };
 }
 
 /**
@@ -27,16 +39,36 @@ export function createServer(): McpServer {
 
   // Register all tools with annotations
   for (const tool of tools) {
+    const adaptedHandler = adaptToolHandler(tool.handler);
     if (tool.annotations) {
-      server.tool(tool.name, tool.description, tool.schema, tool.annotations, tool.handler);
+      server.tool(
+        tool.name,
+        tool.description,
+        tool.schema,
+        tool.annotations,
+        // deno-lint-ignore no-explicit-any
+        adaptedHandler as any,
+      );
     } else {
-      server.tool(tool.name, tool.description, tool.schema, tool.handler);
+      server.tool(
+        tool.name,
+        tool.description,
+        tool.schema,
+        // deno-lint-ignore no-explicit-any
+        adaptedHandler as any,
+      );
     }
   }
 
   // Register all prompts
   for (const prompt of prompts) {
-    server.prompt(prompt.name, prompt.description, prompt.arguments, prompt.handler);
+    // deno-lint-ignore no-explicit-any
+    (server as any).prompt(
+      prompt.name,
+      prompt.description,
+      prompt.arguments,
+      prompt.handler,
+    );
   }
 
   return server;
