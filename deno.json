@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "tasks": {
     "dev": "op run --env-file=.env -- deno run --allow-net --allow-env --allow-read main.ts",
     "dev:no-op": "deno run --allow-net --allow-env --allow-read main.ts",
@@ -28,7 +28,9 @@
     "lineWidth": 100,
     "indentWidth": 2,
     "singleQuote": false,
-    "exclude": ["CHANGELOG.md"]
+    "exclude": [
+      "CHANGELOG.md"
+    ]
   },
   "lint": {
     "rules": {
