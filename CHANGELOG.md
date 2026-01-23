@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.6...canvas-lms-mcp-v0.2.7) (2026-01-23)
+
+
+### Bug Fixes
+
+* remove registry-url that requires token for npm trusted publishing ([1f849f5](https://github.com/mtgibbs/canvas-lms-mcp/commit/1f849f5be2c399c23eaa8d091ce2c2b8ea39c30d))
+
 ## [0.2.6](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.5...canvas-lms-mcp-v0.2.6) (2026-01-23)
 
 
