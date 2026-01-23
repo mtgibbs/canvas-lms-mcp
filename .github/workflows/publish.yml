@@ -36,7 +36,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Build npm package
         run: deno task build:npm
@@ -45,6 +44,8 @@ jobs:
         run: |
           cd npm
           npm publish --provenance --access public
+        env:
+          NPM_CONFIG_PROVENANCE: true
 
   publish-extension:
     name: Build and attach extension
