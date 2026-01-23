@@ -375,11 +375,11 @@ canvas stats --hide-empty
 
 These options work with all commands:
 
-| Option              | Description                                |
-| ------------------- | ------------------------------------------ |
-| `--format <format>` | Output format: `json` (default) or `table` |
-| `--student <id>`    | Student ID for observer accounts           |
-| `--help`            | Show help for a command                    |
+| Option              | Description                                                                     |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `--format <format>` | Output format: `json` (default) or `table`                                      |
+| `--student <id>`    | Student ID for observer accounts (uses `CANVAS_STUDENT_ID` from config if omitted) |
+| `--help`            | Show help for a command                                                         |
 
 ### Output Formats
 

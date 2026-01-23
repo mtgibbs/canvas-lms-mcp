@@ -114,7 +114,7 @@ canvas unsubmitted --course-id 12345
 
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
---student <id>         # Student ID for observer accounts (default: self)
+--student <id>         # Student ID for observer accounts (uses CANVAS_STUDENT_ID from config if not specified)
 ```
 
 ## MCP Tools
