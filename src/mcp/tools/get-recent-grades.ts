@@ -31,7 +31,7 @@ export const schema = {
 export const getRecentGradesTool: ToolDefinition<typeof schema> = {
   name: "get_recent_grades",
   description:
-    "Get recently graded assignments with scores. Can filter by date range and minimum grade threshold.",
+    "Get recently graded assignments with scores from the last N days (default 14). Shows assignment name, course, score, points possible, and percentage. Use below_percentage to filter for low grades (e.g., below_percentage=70 to find grades under 70%). Useful for questions like 'how did I do on recent tests?' or 'any bad grades lately?'",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, below_percentage, course_id }) => {

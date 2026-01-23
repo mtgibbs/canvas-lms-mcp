@@ -14,7 +14,8 @@ export const schema = {
 
 export const getUpcomingAssignmentsTool: ToolDefinition<typeof schema> = {
   name: "get_upcoming_assignments",
-  description: "Get assignments due in the next N days for a single course",
+  description:
+    "Get assignments due in the next N days for a SINGLE course. Requires course_id. Use this when asking about upcoming work in a specific class. For upcoming assignments across ALL courses at once, use get_due_this_week instead - it's more efficient for broad queries.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ course_id, days }) => {

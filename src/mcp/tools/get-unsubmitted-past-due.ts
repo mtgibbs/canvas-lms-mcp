@@ -22,7 +22,7 @@ export const schema = {
 export const getUnsubmittedPastDueTool: ToolDefinition<typeof schema> = {
   name: "get_unsubmitted_past_due",
   description:
-    "Get assignments that are past due but not submitted (catches items Canvas hasn't flagged as missing yet)",
+    "Get assignments that are past due but have no submission. This catches work that Canvas hasn't officially flagged as 'missing' yet (teachers may not have updated the status). Use this alongside get_missing_assignments for a complete picture of all outstanding/late work. Returns assignment name, course, due date, and points.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, course_id }) => {

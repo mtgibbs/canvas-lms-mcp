@@ -23,7 +23,7 @@ export const schema = {
 export const getStatsTool: ToolDefinition<typeof schema> = {
   name: "get_stats",
   description:
-    "Get late and missing assignment statistics by course, showing percentages to identify problem areas",
+    "Get late and missing assignment statistics aggregated by course. Shows total assignments, late count, missing count, and percentages for each course. Use this to identify problem courses or answer questions like 'which class has the most missing work?' or 'how many late assignments do I have?'",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, hide_empty }) => {

@@ -17,7 +17,8 @@ export const schema = {
 
 export const getCoursesTool: ToolDefinition<typeof schema> = {
   name: "get_courses",
-  description: "List all active courses and current grades for the student",
+  description:
+    "List all active courses with current cumulative grades (score percentages). Use this to get an overview of the student's course load and overall academic standing. For observer/parent accounts, this fetches the observed student's grades, not the observer's. Returns course name, code, and current score percentage.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id }) => {
