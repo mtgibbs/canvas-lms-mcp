@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to publish (e.g., canvas-lms-mcp-v0.2.1)'
+        description: "Release tag to publish (e.g., canvas-lms-mcp-v0.2.1)"
         required: true
 
 permissions:
