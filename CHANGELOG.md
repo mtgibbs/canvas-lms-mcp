@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.8](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.7...canvas-lms-mcp-v0.2.8) (2026-01-23)
+
+
+### Bug Fixes
+
+* use NPM_TOKEN secret for npm authentication ([cba2962](https://github.com/mtgibbs/canvas-lms-mcp/commit/cba2962752053c589192bf728493eeab0f748288))
+* use workflow_dispatch for publish to match npm trusted publisher ([e5140f7](https://github.com/mtgibbs/canvas-lms-mcp/commit/e5140f740049947068e4427c400bb7f24686e4c9))
+
 ## [0.2.7](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.6...canvas-lms-mcp-v0.2.7) (2026-01-23)
 
 
