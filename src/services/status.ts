@@ -8,7 +8,7 @@
  */
 
 import { listCoursesWithGrades } from "../api/courses.ts";
-import { getMissingSubmissions } from "../api/users.ts";
+import { getMissingSubmissions, resolveUserId } from "../api/users.ts";
 import { listGradedSubmissions, listSubmissions } from "../api/submissions.ts";
 import type {
   ComprehensiveStatus,
@@ -33,6 +33,9 @@ export async function getComprehensiveStatus(
     daysGrades = 14,
     lowGradeThreshold = 70,
   } = options;
+
+  // Resolve "self" to numeric ID for API calls that need it
+  const numericStudentId = await resolveUserId(studentId);
 
   // Step 1: Get courses with current grades
   const coursesWithGrades = await listCoursesWithGrades(studentId);
@@ -61,10 +64,10 @@ export async function getComprehensiveStatus(
       const [allSubmissions, gradedSubmissions] = await Promise.all([
         listSubmissions({
           course_id: course.id,
-          student_ids: [Number(studentId)],
+          student_ids: [numericStudentId],
           include: ["assignment"],
         }),
-        listGradedSubmissions(course.id, studentId),
+        listGradedSubmissions(course.id, numericStudentId),
       ]);
 
       // Filter for upcoming assignments

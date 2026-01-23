@@ -4,6 +4,7 @@
 
 import { getClient } from "./client.ts";
 import type { ListSubmissionsOptions, Submission } from "../types/canvas.ts";
+import { resolveUserId } from "./users.ts";
 
 /**
  * List submissions for a course (all students or specific students)
@@ -58,7 +59,7 @@ export function getSubmission(
 /**
  * List all submissions for a specific user in a course
  */
-export function listUserSubmissions(
+export async function listUserSubmissions(
   courseId: number,
   userId: number | string,
   options?: {
@@ -66,9 +67,12 @@ export function listUserSubmissions(
     workflowState?: "submitted" | "unsubmitted" | "graded" | "pending_review";
   },
 ): Promise<Submission[]> {
+  // Resolve "self" to a numeric ID
+  const resolvedUserId = await resolveUserId(userId);
+
   return listSubmissions({
     course_id: courseId,
-    student_ids: [Number(userId)],
+    student_ids: [resolvedUserId],
     include: options?.include || ["assignment"],
     workflow_state: options?.workflowState,
   });

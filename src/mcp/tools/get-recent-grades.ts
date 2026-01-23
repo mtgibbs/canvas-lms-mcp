@@ -5,10 +5,14 @@
 
 import { z } from "zod";
 import { getRecentGrades } from "../../services/index.ts";
+import { getEffectiveStudentId } from "../../api/users.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  student_id: z.string().describe("Student ID"),
+  student_id: z
+    .string()
+    .optional()
+    .describe("Student ID (uses configured CANVAS_STUDENT_ID if not provided)"),
   days: z
     .number()
     .optional()
@@ -31,8 +35,10 @@ export const getRecentGradesTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, below_percentage, course_id }) => {
+    const effectiveStudentId = await getEffectiveStudentId(student_id);
+
     const grades = await getRecentGrades({
-      studentId: student_id,
+      studentId: String(effectiveStudentId),
       days,
       courseId: course_id,
       belowPercentage: below_percentage,

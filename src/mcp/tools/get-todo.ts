@@ -5,10 +5,14 @@
 
 import { z } from "zod";
 import { getTodoItems } from "../../services/index.ts";
+import { getEffectiveStudentId } from "../../api/users.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  student_id: z.string().describe("Student ID"),
+  student_id: z
+    .string()
+    .optional()
+    .describe("Student ID (uses configured CANVAS_STUDENT_ID if not provided)"),
   days: z.number().optional().default(7).describe("Number of days to look ahead (default: 7)"),
   hide_submitted: z
     .boolean()
@@ -24,8 +28,10 @@ export const getTodoTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, hide_submitted }) => {
+    const effectiveStudentId = await getEffectiveStudentId(student_id);
+
     const items = await getTodoItems({
-      studentId: student_id,
+      studentId: String(effectiveStudentId),
       days,
       hideSubmitted: hide_submitted,
     });

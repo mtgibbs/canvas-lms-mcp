@@ -4,8 +4,80 @@
  */
 
 import { getClient } from "./client.ts";
-import type { MissingSubmission, PlannerItem, Submission, UpcomingEvent } from "../types/canvas.ts";
+import type {
+  MissingSubmission,
+  PlannerItem,
+  Submission,
+  UpcomingEvent,
+  User,
+} from "../types/canvas.ts";
 import { listCourses } from "./courses.ts";
+
+// Cache for resolved user IDs to avoid repeated API calls
+const userIdCache = new Map<string, number>();
+
+/**
+ * Get the current user's profile
+ */
+export function getCurrentUser(): Promise<User> {
+  const client = getClient();
+  return client.get<User>("/users/self");
+}
+
+/**
+ * Resolve a user ID that might be "self" to a numeric ID
+ * Uses caching to avoid repeated API calls
+ *
+ * @param userId - Can be a number, numeric string, or "self"
+ * @returns The resolved numeric user ID
+ */
+export async function resolveUserId(userId: string | number): Promise<number> {
+  // If already a number, return it
+  if (typeof userId === "number") {
+    return userId;
+  }
+
+  // If it's a numeric string, parse it
+  const parsed = Number(userId);
+  if (!isNaN(parsed)) {
+    return parsed;
+  }
+
+  // Check cache
+  const cacheKey = userId.toLowerCase();
+  if (userIdCache.has(cacheKey)) {
+    return userIdCache.get(cacheKey)!;
+  }
+
+  // If it's "self", get the current user's ID
+  if (userId === "self") {
+    const user = await getCurrentUser();
+    userIdCache.set(cacheKey, user.id);
+    return user.id;
+  }
+
+  throw new Error(`Invalid user ID: ${userId}`);
+}
+
+/**
+ * Get effective student ID - uses provided ID or falls back to config
+ * Also resolves "self" to numeric ID when needed for API calls
+ */
+export async function getEffectiveStudentId(
+  providedId?: string,
+  options?: { resolveToNumeric?: boolean },
+): Promise<string | number> {
+  // Use provided ID or get from config
+  const { getConfig } = await import("../utils/config.ts");
+  const studentId = providedId || getConfig().studentId;
+
+  // If we need a numeric ID (for submissions API), resolve it
+  if (options?.resolveToNumeric) {
+    return resolveUserId(studentId);
+  }
+
+  return studentId;
+}
 
 /**
  * Options for getMissingSubmissions
