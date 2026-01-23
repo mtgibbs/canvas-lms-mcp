@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.9](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.8...canvas-lms-mcp-v0.2.9) (2026-01-23)
+
+
+### Bug Fixes
+
+* format README.md table alignment ([042bc79](https://github.com/mtgibbs/canvas-lms-mcp/commit/042bc793703e952f70d009a31941c0d977cd35e6))
+
+
+### Documentation
+
+* clarify --student option uses CANVAS_STUDENT_ID from config as fallback ([857e924](https://github.com/mtgibbs/canvas-lms-mcp/commit/857e92444baf6b8232eb54cfd42dbffb7a7863fc))
+
 ## [0.2.8](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.7...canvas-lms-mcp-v0.2.8) (2026-01-23)
 
 
