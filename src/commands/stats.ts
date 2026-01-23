@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { type CourseStats, getStats } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const statsCommand = new Command()
@@ -15,16 +16,15 @@ export const statsCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "table",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("--hide-empty", "Hide courses with no assignments")
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     const stats = await getStats({
-      studentId: options.student,
+      studentId: String(studentId),
       hideEmpty: options.hideEmpty,
     });
 

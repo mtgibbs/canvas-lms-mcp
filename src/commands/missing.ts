@@ -11,6 +11,7 @@ import {
   getMissingCountsByCourse,
   getUnsubmittedAssignments,
 } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const missingCommand = new Command()
@@ -19,9 +20,7 @@ export const missingCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("-c, --course-id <id:number>", "Filter by course ID")
   .option(
     "--summary",
@@ -34,11 +33,12 @@ export const missingCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     if (options.summary) {
       // Show summary counts by course
       const counts = await getMissingCountsByCourse({
-        studentId: options.student,
+        studentId: String(studentId),
         courseId: options.courseId,
       });
 
@@ -51,7 +51,7 @@ export const missingCommand = new Command()
 
     // Get Canvas-flagged missing submissions
     const missing = await getMissingAssignments({
-      studentId: options.student,
+      studentId: String(studentId),
       courseId: options.courseId,
     });
 
@@ -79,7 +79,7 @@ export const missingCommand = new Command()
     // If --include-unsubmitted, also add unsubmitted past-due assignments
     if (options.includeUnsubmitted) {
       const unsubmitted = await getUnsubmittedAssignments({
-        studentId: options.student,
+        studentId: String(studentId),
         courseId: options.courseId,
       });
 

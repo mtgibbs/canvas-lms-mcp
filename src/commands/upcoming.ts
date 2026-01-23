@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getUpcomingEvents } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const upcomingCommand = new Command()
@@ -15,9 +16,7 @@ export const upcomingCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("--days <days:number>", "Only show events within N days", {
     default: 14,
   })
@@ -25,9 +24,10 @@ export const upcomingCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     const events = await getUpcomingEvents({
-      studentId: options.student,
+      studentId: String(studentId),
       days: options.days,
       typeFilter: options.type as "assignment" | "event" | undefined,
     });

@@ -46,11 +46,15 @@ export function listCourseEnrollments(
     type?: string[];
     state?: string[];
     userId?: number | string;
+    include?: string[];
   },
 ): Promise<Enrollment[]> {
   const client = getClient();
 
-  const params: Record<string, string | string[] | number | undefined> = {};
+  const params: Record<string, string | string[] | number | undefined> = {
+    // Always include grades when fetching enrollments
+    include: options?.include || ["grades"],
+  };
 
   if (options?.type) {
     params.type = options.type;
@@ -83,6 +87,9 @@ export async function getUserEnrollment(
 /**
  * List courses with grades for a user (observer or self)
  * Enriches course data with enrollment/grade information
+ *
+ * For observer accounts querying a specific student, this fetches
+ * the student's enrollment separately to get their actual grades.
  */
 export async function listCoursesWithGrades(
   userId: string | number = "self",
@@ -94,14 +101,40 @@ export async function listCoursesWithGrades(
     state: ["available"],
   });
 
-  // Filter and enrich with the specific user's enrollment data
-  const coursesWithGrades = courses.map((course) => {
-    // Find the enrollment for this user (or observed user)
-    const enrollment = course.enrollments?.find((e) => {
-      if (userId === "self") {
-        return e.type === "StudentEnrollment" || e.type === "ObserverEnrollment";
+  // If querying for a specific student (not "self"), we need to fetch
+  // the student's enrollment separately since the courses endpoint
+  // only returns the observer's enrollment for parent accounts
+  const isObserverQuery = userId !== "self" && !isNaN(Number(userId));
+
+  if (isObserverQuery) {
+    // Fetch student enrollments with grades in parallel
+    const enrollmentPromises = courses.map(async (course) => {
+      try {
+        const enrollments = await listCourseEnrollments(course.id, {
+          userId: Number(userId),
+          type: ["StudentEnrollment"],
+        });
+        return { courseId: course.id, enrollment: enrollments[0] || null };
+      } catch {
+        return { courseId: course.id, enrollment: null };
       }
-      return e.user_id === Number(userId) || e.observed_user?.id === Number(userId);
+    });
+
+    const enrollmentResults = await Promise.all(enrollmentPromises);
+    const enrollmentMap = new Map(
+      enrollmentResults.map((r) => [r.courseId, r.enrollment]),
+    );
+
+    return courses.map((course) => ({
+      ...course,
+      enrollment: enrollmentMap.get(course.id) || undefined,
+    }));
+  }
+
+  // For "self" queries, use the enrollment from the courses response
+  const coursesWithGrades = courses.map((course) => {
+    const enrollment = course.enrollments?.find((e) => {
+      return e.type === "StudentEnrollment" || e.type === "ObserverEnrollment";
     });
 
     return {

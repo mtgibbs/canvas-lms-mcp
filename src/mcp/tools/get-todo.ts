@@ -24,7 +24,7 @@ export const schema = {
 export const getTodoTool: ToolDefinition<typeof schema> = {
   name: "get_todo",
   description:
-    "Get the student's to-do list (planner items) showing upcoming assignments, quizzes, and tasks",
+    "Get the student's Canvas planner/to-do list showing upcoming assignments, quizzes, discussions, and tasks. This is what the student sees in their Canvas planner. Shows item type, due date, points, and submission status. Use hide_submitted=true to focus on incomplete items only.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, hide_submitted }) => {

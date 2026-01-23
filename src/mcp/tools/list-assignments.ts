@@ -18,7 +18,8 @@ export const schema = {
 
 export const listAssignmentsTool: ToolDefinition<typeof schema> = {
   name: "list_assignments",
-  description: "List assignments for a course with optional filtering",
+  description:
+    "List assignments for a specific course with optional filtering by bucket (past, overdue, undated, ungraded, unsubmitted, upcoming, future). Use this for detailed assignment queries within a single course, like 'show me all overdue assignments in Math' or 'what assignments are ungraded in Science'. For simpler upcoming/due queries, prefer get_due_this_week.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ course_id, bucket, search_term }) => {

@@ -28,7 +28,7 @@ export const schema = {
 export const getDueThisWeekTool: ToolDefinition<typeof schema> = {
   name: "get_due_this_week",
   description:
-    "Get all assignments due in the next N days across ALL courses for a student, with submission status",
+    "Get all assignments due in the next N days across ALL courses at once. This is the recommended tool for questions like 'what's due this week?' or 'what homework do I have?'. Returns assignment name, course, due date, points, and whether it's been submitted. By default hides already-graded items to focus on pending work.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, hide_graded }) => {
