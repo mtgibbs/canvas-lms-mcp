@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getDueAssignments } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const dueCommand = new Command()
@@ -15,9 +16,7 @@ export const dueCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("--days <days:number>", "Number of days to look ahead", {
     default: 7,
   })
@@ -28,10 +27,11 @@ export const dueCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
     const hideGraded = options.showGraded ? false : options.hideGraded;
 
     const results = await getDueAssignments({
-      studentId: options.student,
+      studentId: String(studentId),
       days: options.days,
       hideGraded,
     });

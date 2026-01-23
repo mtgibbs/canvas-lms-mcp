@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { formatGrade, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getCourses } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const coursesCommand = new Command()
@@ -15,14 +16,13 @@ export const coursesCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
-    const courses = await getCourses({ studentId: options.student });
+    const courses = await getCourses({ studentId: String(studentId) });
 
     output(courses, format, {
       headers: ["ID", "Course", "Code", "Grade", "Score"],

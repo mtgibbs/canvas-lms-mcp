@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getComprehensiveStatus } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const statusCommand = new Command()
@@ -17,9 +18,7 @@ export const statusCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option(
     "--days-upcoming <days:number>",
     "Days to look ahead for upcoming assignments",
@@ -38,9 +37,10 @@ export const statusCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     const statusData = await getComprehensiveStatus({
-      studentId: options.student,
+      studentId: String(studentId),
       daysUpcoming: options.daysUpcoming,
       daysGrades: options.daysGrades,
       lowGradeThreshold: options.threshold,

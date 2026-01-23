@@ -5,10 +5,14 @@
 
 import { z } from "zod";
 import { getMissingAssignments } from "../../services/index.ts";
+import { getEffectiveStudentId } from "../../api/users.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  student_id: z.string().optional().describe("Student ID (default: 'self')"),
+  student_id: z
+    .string()
+    .optional()
+    .describe("Student ID (uses configured CANVAS_STUDENT_ID if not provided)"),
   course_id: z.number().optional().describe("Filter by specific course ID"),
 };
 
@@ -18,8 +22,9 @@ export const getMissingAssignmentsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, course_id }) => {
+    const effectiveStudentId = await getEffectiveStudentId(student_id);
     const missing = await getMissingAssignments({
-      studentId: student_id || "self",
+      studentId: String(effectiveStudentId),
       courseId: course_id,
     });
 

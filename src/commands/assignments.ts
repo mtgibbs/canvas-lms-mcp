@@ -15,9 +15,6 @@ export const assignmentsCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
   .option("-c, --course-id <id:number>", "Filter by course ID (required unless --all-courses)")
   .option("--all-courses", "Fetch assignments from all courses")
   .option("--due-this-week", "Only show assignments due this week")

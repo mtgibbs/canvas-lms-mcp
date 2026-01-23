@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { isGradeBelow, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getRecentGrades } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const gradesCommand = new Command()
@@ -15,9 +16,7 @@ export const gradesCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("-c, --course-id <id:number>", "Filter by course ID")
   .option("--all-courses", "Fetch grades from all courses")
   .option(
@@ -28,6 +27,7 @@ export const gradesCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     if (!options.courseId && !options.allCourses) {
       console.error("Error: Either --course-id or --all-courses is required");
@@ -35,7 +35,7 @@ export const gradesCommand = new Command()
     }
 
     let grades = await getRecentGrades({
-      studentId: options.student,
+      studentId: String(studentId),
       days: options.days,
       courseId: options.courseId,
     });

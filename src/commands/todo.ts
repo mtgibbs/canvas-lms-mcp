@@ -7,6 +7,7 @@ import { Command } from "@cliffy/command";
 import { formatDate, output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
 import { getTodoItems } from "../services/index.ts";
+import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
 export const todoCommand = new Command()
@@ -15,9 +16,7 @@ export const todoCommand = new Command()
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
-  .option("-s, --student <id:string>", "Student ID (for observer accounts)", {
-    default: "self",
-  })
+  .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("-d, --days <days:number>", "Number of days ahead to look (default: 7)", {
     default: 7,
   })
@@ -27,9 +26,10 @@ export const todoCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+    const studentId = await getEffectiveStudentId(options.student);
 
     const items = await getTodoItems({
-      studentId: options.student,
+      studentId: String(studentId),
       days: options.days,
       startDate: options.start,
       endDate: options.end,
