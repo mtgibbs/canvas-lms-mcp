@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.2...canvas-lms-mcp-v0.2.3) (2026-01-23)
+
+
+### Bug Fixes
+
+* use getEffectiveStudentId consistently across CLI and MCP ([#7](https://github.com/mtgibbs/canvas-lms-mcp/issues/7)) ([254b9a3](https://github.com/mtgibbs/canvas-lms-mcp/commit/254b9a385d6a848324ee75a0220d8d94a2c73e32))
+
 ## [0.2.2](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.1...canvas-lms-mcp-v0.2.2) (2026-01-23)
 
 
