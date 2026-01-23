@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.1...canvas-lms-mcp-v0.2.2) (2026-01-23)
+
+
+### Bug Fixes
+
+* resolve student ID properly for observer/parent accounts ([bca0b18](https://github.com/mtgibbs/canvas-lms-mcp/commit/bca0b18b8d2f001fc67ee70d4cdd6e31d9cf56d6))
+
 ## [0.2.1](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.0...canvas-lms-mcp-v0.2.1) (2026-01-23)
 
 
