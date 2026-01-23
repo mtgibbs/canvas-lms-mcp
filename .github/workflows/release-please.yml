@@ -14,8 +14,8 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      releases_created: ${{ steps.release.outputs.releases_created }}
-      tag_name: ${{ steps.release.outputs['canvas-lms-mcp--tag_name'] }}
+      release_created: ${{ steps.check-release.outputs.release_created }}
+      tag_name: ${{ steps.check-release.outputs.tag_name }}
     steps:
       - name: Release Please
         id: release
@@ -24,9 +24,25 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Check if release commit
+        id: check-release
+        run: |
+          # Check if this commit message matches release pattern
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if [[ "$COMMIT_MSG" =~ ^chore\(main\):\ release\ canvas-lms-mcp\ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            TAG="canvas-lms-mcp-v${VERSION}"
+            echo "Detected release commit for version ${VERSION}"
+            echo "release_created=true" >> $GITHUB_OUTPUT
+            echo "tag_name=${TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "Not a release commit"
+            echo "release_created=false" >> $GITHUB_OUTPUT
+          fi
+
   publish:
     needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
+    if: needs.release-please.outputs.release_created == 'true'
     uses: ./.github/workflows/publish.yml
     with:
       tag: ${{ needs.release-please.outputs.tag_name }}
