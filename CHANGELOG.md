@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.5...canvas-lms-mcp-v0.2.6) (2026-01-23)
+
+
+### Bug Fixes
+
+* detect release commits by commit message pattern ([da481bc](https://github.com/mtgibbs/canvas-lms-mcp/commit/da481bc98ee3d89488240a428ac2e7871b207321))
+
 ## [0.2.5](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.4...canvas-lms-mcp-v0.2.5) (2026-01-23)
 
 
