@@ -28,8 +28,9 @@ jobs:
         id: check-release
         run: |
           # Check if this commit message matches release pattern
+          # Works with both direct commits and merge commits (where the release line is on line 2)
           COMMIT_MSG="${{ github.event.head_commit.message }}"
-          if [[ "$COMMIT_MSG" =~ ^chore\(main\):\ release\ canvas-lms-mcp\ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+          if [[ "$COMMIT_MSG" =~ chore\(main\):\ release\ canvas-lms-mcp\ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
             VERSION="${BASH_REMATCH[1]}"
             TAG="canvas-lms-mcp-v${VERSION}"
             echo "Detected release commit for version ${VERSION}"
