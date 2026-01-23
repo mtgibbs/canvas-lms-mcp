@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.4...canvas-lms-mcp-v0.2.5) (2026-01-23)
+
+
+### Bug Fixes
+
+* use workflow_call to chain release-please with publish ([a8a860a](https://github.com/mtgibbs/canvas-lms-mcp/commit/a8a860ab1b1ad33c18743a3dde501f5b6f93167a))
+
 ## [0.2.4](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.3...canvas-lms-mcp-v0.2.4) (2026-01-23)
 
 
