@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.10](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.9...canvas-lms-mcp-v0.2.10) (2026-01-26)
+
+
+### Features
+
+* add announcements and inbox commands ([8218db9](https://github.com/mtgibbs/canvas-lms-mcp/commit/8218db9ca553132c97181928639fcbe068a31493))
+* add announcements and inbox commands ([3c4201e](https://github.com/mtgibbs/canvas-lms-mcp/commit/3c4201e9bce7986f7ad12b03e281fd416e91494c))
+* add MCP Desktop Extension icon ([5339e0f](https://github.com/mtgibbs/canvas-lms-mcp/commit/5339e0f4de871942ea6f3265544ddca9443f2a28))
+* add MCP Desktop Extension icon ([3af059a](https://github.com/mtgibbs/canvas-lms-mcp/commit/3af059a9906783d6a302e70d9f986cdfcb9d9c9d))
+
+
+### Bug Fixes
+
+* detect release pattern in merge commit messages ([304f360](https://github.com/mtgibbs/canvas-lms-mcp/commit/304f360ebb334860efedaf889e174878e1c95554))
+
 ## [0.2.9](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.8...canvas-lms-mcp-v0.2.9) (2026-01-23)
 
 
