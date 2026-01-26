@@ -27,7 +27,7 @@ export const schema = {
 export const getInboxTool: ToolDefinition<typeof schema> = {
   name: "get_inbox",
   description:
-    "Get Canvas inbox conversations. Shows message subject, participants, last message date, and read status. Note: for observer accounts, this shows the observer's own inbox, not the student's. Use scope='unread' to see only unread messages.",
+    "Get Canvas inbox direct messages (conversations). These are private messages between users, NOT course announcements. For observer/parent accounts, this shows the observer's own inbox. To see course announcements posted by teachers (visible in the student's Canvas app), use get_announcements instead. When checking what teachers have communicated, ALWAYS call BOTH get_inbox AND get_announcements.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, scope, course_id }) => {

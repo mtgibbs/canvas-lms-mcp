@@ -27,7 +27,7 @@ export const schema = {
 export const getAnnouncementsTool: ToolDefinition<typeof schema> = {
   name: "get_announcements",
   description:
-    "Get recent course announcements from Canvas. Shows announcement title, message content, author, and posting date. Useful for checking teacher communications about schedule changes, exam reminders, or class updates.",
+    "Get course announcements that teachers post to their class pages in Canvas. These are the posts students see in their Canvas app under each course — things like remote learning instructions, exam reminders, schedule changes, and class updates. This is DIFFERENT from inbox messages (get_inbox). When checking what teachers have communicated, ALWAYS call BOTH get_announcements AND get_inbox to get the full picture.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days, course_id }) => {
