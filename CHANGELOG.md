@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.11](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.10...canvas-lms-mcp-v0.2.11) (2026-01-26)
+
+
+### Bug Fixes
+
+* replace icon with edge-to-edge transparent version ([adb7d2d](https://github.com/mtgibbs/canvas-lms-mcp/commit/adb7d2d1bc07a26e29e94660b1ac732ef201a276))
+* replace icon with edge-to-edge transparent version ([a49763d](https://github.com/mtgibbs/canvas-lms-mcp/commit/a49763d23cd38675caf444156b589aa281791f0d))
+
 ## [0.2.10](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.9...canvas-lms-mcp-v0.2.10) (2026-01-26)
 
 
