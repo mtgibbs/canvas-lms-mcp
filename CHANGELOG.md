@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.12](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.11...canvas-lms-mcp-v0.2.12) (2026-01-26)
+
+
+### Bug Fixes
+
+* have release-please dispatch CI on its PR branch ([594a306](https://github.com/mtgibbs/canvas-lms-mcp/commit/594a306b0c69b730e25096a2cf297c732e1cca61))
+* have release-please dispatch CI on its PR branch ([5ce6545](https://github.com/mtgibbs/canvas-lms-mcp/commit/5ce6545662d67ae679f6498c9edc2b59e0e41a86))
+* improve announcements discoverability for AI tool selection ([7361235](https://github.com/mtgibbs/canvas-lms-mcp/commit/7361235f4972b2e0031361cde0fed205b7ceb843))
+* improve announcements discoverability for AI tool selection ([2243425](https://github.com/mtgibbs/canvas-lms-mcp/commit/224342538f974bced257b305d4ffed63c60abf0c))
+* parse release-please PR output as JSON object ([2deb1d5](https://github.com/mtgibbs/canvas-lms-mcp/commit/2deb1d52c2d6711e210b6ed0fb2b943156eac24f))
+* parse release-please PR output as JSON object ([bdf696f](https://github.com/mtgibbs/canvas-lms-mcp/commit/bdf696f66e356dc146528b1378f6410977405e8b))
+* report commit statuses when CI runs via workflow_dispatch ([7e4fdbb](https://github.com/mtgibbs/canvas-lms-mcp/commit/7e4fdbbb8f95d86e0ce77a2e1e73e073523699b0))
+* report commit statuses when CI runs via workflow_dispatch ([fb52c20](https://github.com/mtgibbs/canvas-lms-mcp/commit/fb52c20926f59cf44b933090524f07b1e4857457))
+* trigger CI on release-please branch pushes ([e7cf435](https://github.com/mtgibbs/canvas-lms-mcp/commit/e7cf435e28e494983264889002cfbdfd8f93acde))
+* trigger CI on release-please branch pushes ([8df6a1d](https://github.com/mtgibbs/canvas-lms-mcp/commit/8df6a1dacc27df0bf4aa28ee5ac611f387751578))
+
 ## [0.2.11](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.10...canvas-lms-mcp-v0.2.11) (2026-01-26)
 
 
