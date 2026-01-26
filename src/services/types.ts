@@ -63,12 +63,35 @@ export interface GradedAssignment {
   url?: string;
 }
 
+export interface AnnouncementItem {
+  id: number;
+  title: string;
+  message: string;
+  posted_at: string;
+  course_id: number;
+  course_name: string;
+  author_name: string;
+  url: string;
+}
+
+export interface InboxItem {
+  id: number;
+  subject: string | null;
+  last_message: string | null;
+  last_message_at: string | null;
+  message_count: number;
+  workflow_state: "read" | "unread" | "archived";
+  participants: string[];
+  context_name: string | null;
+}
+
 export interface ComprehensiveStatus {
   summary: {
     total_courses: number;
     missing_assignments: number;
     upcoming_assignments: number;
     recent_low_grades: number;
+    recent_announcements: number;
   };
   courses: Array<{
     id: number;
@@ -81,6 +104,7 @@ export interface ComprehensiveStatus {
   missing_assignments: MissingAssignment[];
   upcoming_assignments: DueAssignment[];
   recent_low_grades: GradedAssignment[];
+  recent_announcements: AnnouncementItem[];
 }
 
 export interface CourseStats {
