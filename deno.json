@@ -1,5 +1,5 @@
 {
-  "version": "0.2.10",
+  "version": "0.2.11",
   "tasks": {
     "dev": "op run --env-file=.env -- deno run --allow-net --allow-env --allow-read main.ts",
     "dev:no-op": "deno run --allow-net --allow-env --allow-read main.ts",
