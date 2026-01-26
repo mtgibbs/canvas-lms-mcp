@@ -85,3 +85,32 @@ jobs:
 
       - name: Validate extension
         run: mcpb validate npm/manifest.json
+
+  # When CI is triggered by workflow_dispatch (e.g. from release-please),
+  # check runs aren't associated with PRs for branch protection purposes.
+  # Create commit statuses which branch protection does recognize.
+  report-status:
+    name: Report CI status
+    if: github.event_name == 'workflow_dispatch'
+    needs: [check, build-npm, build-extension]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Create commit statuses for branch protection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = context.sha;
+            const contexts = ['Type check and lint', 'Build npm package'];
+            for (const name of contexts) {
+              await github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha,
+                state: 'success',
+                context: name,
+                description: 'All checks passed',
+              });
+              console.log(`Created status for "${name}" on ${sha}`);
+            }
