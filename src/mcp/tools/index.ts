@@ -12,6 +12,8 @@ import { getStatsTool } from "./get-stats.ts";
 import { getTodoTool } from "./get-todo.ts";
 import { getRecentGradesTool } from "./get-recent-grades.ts";
 import { getComprehensiveStatusTool } from "./get-comprehensive-status.ts";
+import { getAnnouncementsTool } from "./get-announcements.ts";
+import { getInboxTool } from "./get-inbox.ts";
 import type { AnyToolDefinition } from "../types.ts";
 
 /**
@@ -28,13 +30,17 @@ export const tools: AnyToolDefinition[] = [
   getTodoTool,
   getRecentGradesTool,
   getComprehensiveStatusTool,
+  getAnnouncementsTool,
+  getInboxTool,
 ];
 
 // Re-export individual tools for direct access if needed
 export {
+  getAnnouncementsTool,
   getComprehensiveStatusTool,
   getCoursesTool,
   getDueThisWeekTool,
+  getInboxTool,
   getMissingAssignmentsTool,
   getRecentGradesTool,
   getStatsTool,

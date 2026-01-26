@@ -16,18 +16,20 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 
 **When adding or modifying functionality, ALWAYS update BOTH interfaces:**
 
-| CLI Command   | MCP Tool                   | Description                          |
-| ------------- | -------------------------- | ------------------------------------ |
-| `courses`     | `get_courses`              | List courses with grades             |
-| `missing`     | `get_missing_assignments`  | Canvas-flagged missing work          |
-| `assignments` | `list_assignments`         | Filter/search assignments            |
-| `grades`      | `get_recent_grades`        | Graded submissions with scores       |
-| `upcoming`    | `get_upcoming_assignments` | Assignments due soon (single course) |
-| `todo`        | `get_todo`                 | Planner items                        |
-| `stats`       | `get_stats`                | Late/missing statistics              |
-| `status`      | `get_comprehensive_status` | Full overview (all data in one call) |
-| `due`         | `get_due_this_week`        | Upcoming across ALL courses          |
-| `unsubmitted` | `get_unsubmitted_past_due` | Past-due but not submitted           |
+| CLI Command     | MCP Tool                   | Description                          |
+| --------------- | -------------------------- | ------------------------------------ |
+| `courses`       | `get_courses`              | List courses with grades             |
+| `missing`       | `get_missing_assignments`  | Canvas-flagged missing work          |
+| `assignments`   | `list_assignments`         | Filter/search assignments            |
+| `grades`        | `get_recent_grades`        | Graded submissions with scores       |
+| `upcoming`      | `get_upcoming_assignments` | Assignments due soon (single course) |
+| `todo`          | `get_todo`                 | Planner items                        |
+| `stats`         | `get_stats`                | Late/missing statistics              |
+| `status`        | `get_comprehensive_status` | Full overview (all data in one call) |
+| `due`           | `get_due_this_week`        | Upcoming across ALL courses          |
+| `unsubmitted`   | `get_unsubmitted_past_due` | Past-due but not submitted           |
+| `announcements` | `get_announcements`        | Recent course announcements          |
+| `inbox`         | `get_inbox`                | Canvas inbox conversations           |
 
 **Before completing any feature work:**
 
@@ -112,6 +114,19 @@ canvas due --show-graded       # include already-graded items
 canvas unsubmitted             # all courses
 canvas unsubmitted --course-id 12345
 
+# Course announcements
+canvas announcements                   # last 14 days, all courses
+canvas announcements --days 7          # last 7 days
+canvas announcements --course-id 12345 # specific course
+canvas announcements --format table
+
+# Inbox conversations
+canvas inbox                           # inbox messages
+canvas inbox --scope unread            # unread only
+canvas inbox --scope sent              # sent messages
+canvas inbox --course-id 12345         # specific course
+canvas inbox --format table
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (uses CANVAS_STUDENT_ID from config if not specified)
@@ -133,9 +148,11 @@ The MCP server exposes these tools to AI assistants:
 | `get_todo`                 | Planner items                    | `student_id`, `days?`                                                  |
 | `get_recent_grades`        | Graded with scores               | `student_id`, `days?`, `below_percentage?`                             |
 | `get_comprehensive_status` | **Full overview**                | `student_id`, `days_upcoming?`, `days_grades?`, `low_grade_threshold?` |
+| `get_announcements`        | Recent course announcements      | `student_id`, `days?`, `course_id?`                                    |
+| `get_inbox`                | Canvas inbox conversations       | `student_id`, `scope?`, `course_id?`                                   |
 
 **Recommended for daily check-ins:** Use `get_comprehensive_status` - it returns courses, grades,
-missing work, upcoming assignments, and recent low grades in a single call.
+missing work, upcoming assignments, recent low grades, and recent announcements in a single call.
 
 ## Architecture
 
@@ -144,20 +161,29 @@ src/
 ├── api/           # Canvas API client (shared by CLI and MCP)
 │   ├── client.ts  # HTTP client with auth and pagination
 │   ├── courses.ts, assignments.ts, submissions.ts, users.ts, enrollments.ts
+│   ├── announcements.ts, conversations.ts
 ├── commands/      # CLI commands (Cliffy)
 │   ├── courses.ts, missing.ts, assignments.ts, grades.ts
 │   ├── upcoming.ts, todo.ts, stats.ts, status.ts
 │   ├── due.ts, unsubmitted.ts
+│   ├── announcements.ts, inbox.ts
 ├── mcp/           # MCP server components
 │   ├── server.ts  # Server setup and tool registration
 │   ├── types.ts   # Tool definition types
 │   ├── tools/     # Individual tool implementations
 │   │   ├── get-courses.ts, get-missing-assignments.ts, ...
 │   │   ├── get-recent-grades.ts, get-comprehensive-status.ts
+│   │   ├── get-announcements.ts, get-inbox.ts
 │   │   └── index.ts  # Tool registry
 │   └── prompts/   # MCP prompts (conversation starters)
 │       ├── daily-checkin.ts, week-planning.ts, ...
 │       └── index.ts
+├── services/      # Shared business logic (used by CLI and MCP)
+│   ├── types.ts, index.ts
+│   ├── courses.ts, missing.ts, assignments.ts, grades.ts
+│   ├── upcoming.ts, todo.ts, stats.ts, status.ts
+│   ├── due.ts, unsubmitted.ts, upcoming-events.ts
+│   ├── announcements.ts, inbox.ts
 ├── types/
 │   └── canvas.ts  # TypeScript interfaces for Canvas API
 └── utils/
@@ -191,14 +217,16 @@ CANVAS_STUDENT_ID=self
 
 ### Key Endpoints Used
 
-| Command/Tool | Endpoint                                       |
-| ------------ | ---------------------------------------------- |
-| courses      | `GET /api/v1/courses` with enrollments         |
-| missing      | `GET /api/v1/users/:id/missing_submissions`    |
-| assignments  | `GET /api/v1/courses/:id/assignments`          |
-| grades       | `GET /api/v1/courses/:id/students/submissions` |
-| upcoming     | `GET /api/v1/users/:id/upcoming_events`        |
-| todo         | `GET /api/v1/planner/items` with context_codes |
+| Command/Tool  | Endpoint                                       |
+| ------------- | ---------------------------------------------- |
+| courses       | `GET /api/v1/courses` with enrollments         |
+| missing       | `GET /api/v1/users/:id/missing_submissions`    |
+| assignments   | `GET /api/v1/courses/:id/assignments`          |
+| grades        | `GET /api/v1/courses/:id/students/submissions` |
+| upcoming      | `GET /api/v1/users/:id/upcoming_events`        |
+| todo          | `GET /api/v1/planner/items` with context_codes |
+| announcements | `GET /api/v1/announcements` with context_codes |
+| inbox         | `GET /api/v1/conversations`                    |
 
 ## Important Canvas API Behaviors
 

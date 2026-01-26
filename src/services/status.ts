@@ -10,7 +10,9 @@
 import { listCoursesWithGrades } from "../api/courses.ts";
 import { getMissingSubmissions, resolveUserId } from "../api/users.ts";
 import { listGradedSubmissions, listSubmissions } from "../api/submissions.ts";
+import { listAnnouncements } from "../api/announcements.ts";
 import type {
+  AnnouncementItem,
   ComprehensiveStatus,
   DueAssignment,
   GradedAssignment,
@@ -45,11 +47,44 @@ export async function getComprehensiveStatus(
     courseMap.set(course.id, course.name);
   }
 
-  // Step 2: Get missing submissions
-  const missingSubmissions = await getMissingSubmissions({
-    studentId,
-    include: ["course"],
-  });
+  // Build context_codes for announcements from the course list
+  const contextCodes = coursesWithGrades.map((c) => `course_${c.id}`);
+
+  // Step 2: Get missing submissions and recent announcements in parallel
+  const announcementStartDate = new Date();
+  announcementStartDate.setDate(announcementStartDate.getDate() - 7);
+
+  const [missingSubmissions, rawAnnouncements] = await Promise.all([
+    getMissingSubmissions({
+      studentId,
+      include: ["course"],
+    }),
+    contextCodes.length > 0
+      ? listAnnouncements({
+        context_codes: contextCodes,
+        start_date: announcementStartDate.toISOString(),
+        end_date: new Date().toISOString(),
+        active_only: true,
+      })
+      : Promise.resolve([]),
+  ]);
+
+  // Map announcements to service type
+  const recentAnnouncements: AnnouncementItem[] = rawAnnouncements.map((a) => {
+    const announceCourseId = parseInt(a.context_code.replace("course_", ""), 10);
+    return {
+      id: a.id,
+      title: a.title,
+      message: a.message,
+      posted_at: a.posted_at,
+      course_id: announceCourseId,
+      course_name: courseMap.get(announceCourseId) || a.context_code,
+      author_name: a.author.display_name,
+      url: a.html_url,
+    };
+  }).sort(
+    (a, b) => new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime(),
+  );
 
   // Step 3: Get upcoming assignments and recent grades in parallel
   const now = new Date();
@@ -162,6 +197,7 @@ export async function getComprehensiveStatus(
       missing_assignments: missingSubmissions.length,
       upcoming_assignments: allUpcoming.length,
       recent_low_grades: allRecentLowGrades.length,
+      recent_announcements: recentAnnouncements.length,
     },
     courses: coursesWithGrades.map((course) => {
       const grades = course.enrollment?.grades;
@@ -177,5 +213,6 @@ export async function getComprehensiveStatus(
     missing_assignments: missing,
     upcoming_assignments: allUpcoming,
     recent_low_grades: allRecentLowGrades,
+    recent_announcements: recentAnnouncements,
   };
 }

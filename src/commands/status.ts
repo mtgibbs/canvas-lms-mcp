@@ -59,6 +59,9 @@ export const statusCommand = new Command()
       console.log(
         `Low grades (last ${options.daysGrades} days, <${options.threshold}%): ${statusData.summary.recent_low_grades}`,
       );
+      console.log(
+        `Recent announcements (last 7 days): ${statusData.summary.recent_announcements}`,
+      );
 
       // Courses with grades
       console.log("\n--- CURRENT GRADES ---");
@@ -111,6 +114,19 @@ export const statusCommand = new Command()
             g.score ?? "-",
             g.points_possible,
             g.percentage !== null ? `${g.percentage}%` : "-",
+          ],
+        });
+      }
+      // Announcements
+      if (statusData.recent_announcements.length > 0) {
+        console.log("\n--- RECENT ANNOUNCEMENTS ---");
+        output(statusData.recent_announcements, "table", {
+          headers: ["Course", "Title", "Author", "Posted"],
+          rowMapper: (a) => [
+            a.course_name,
+            a.title,
+            a.author_name,
+            new Date(a.posted_at).toLocaleDateString(),
           ],
         });
       }

@@ -255,6 +255,39 @@ export interface PlannerSubmissionStatus {
   redo_request: boolean;
 }
 
+/** Announcement (discussion topic with is_announcement=true) */
+export interface Announcement {
+  id: number;
+  title: string;
+  message: string;
+  posted_at: string;
+  context_code: string;
+  author: {
+    id: number;
+    display_name: string;
+  };
+  html_url: string;
+  read_state?: "read" | "unread";
+}
+
+/** Conversation participant */
+export interface ConversationParticipant {
+  id: number;
+  name: string;
+}
+
+/** Conversation from the Inbox */
+export interface Conversation {
+  id: number;
+  subject: string | null;
+  workflow_state: "read" | "unread" | "archived";
+  last_message: string | null;
+  last_message_at: string | null;
+  message_count: number;
+  participants: ConversationParticipant[];
+  context_name: string | null;
+}
+
 /** Canvas API pagination info parsed from Link header */
 export interface PaginationLinks {
   current?: string;
