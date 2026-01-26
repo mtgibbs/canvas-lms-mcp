@@ -50,7 +50,6 @@ export async function getAnnouncements(
     context_codes: contextCodes,
     start_date: startDate.toISOString(),
     end_date: now.toISOString(),
-    active_only: true,
   });
 
   // Map to service type and sort by posted_at desc

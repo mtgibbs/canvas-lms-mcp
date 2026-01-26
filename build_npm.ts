@@ -201,6 +201,16 @@ Ask Claude things like:
         { name: "list_assignments", description: "Search and filter assignments by status" },
         { name: "get_stats", description: "Get late/missing statistics by course" },
         { name: "get_todo", description: "Get planner items and to-do list" },
+        { name: "get_recent_grades", description: "Get recently graded submissions with scores" },
+        {
+          name: "get_comprehensive_status",
+          description: "Full academic overview in a single call",
+        },
+        {
+          name: "get_announcements",
+          description: "Get course announcements posted by teachers",
+        },
+        { name: "get_inbox", description: "Get inbox direct messages" },
       ],
     };
     await Deno.writeTextFile("npm/manifest.json", JSON.stringify(manifest, null, 2));

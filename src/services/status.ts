@@ -64,7 +64,6 @@ export async function getComprehensiveStatus(
         context_codes: contextCodes,
         start_date: announcementStartDate.toISOString(),
         end_date: new Date().toISOString(),
-        active_only: true,
       })
       : Promise.resolve([]),
   ]);
