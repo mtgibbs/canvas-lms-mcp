@@ -19,6 +19,7 @@ import { dueCommand } from "./src/commands/due.ts";
 import { unsubmittedCommand } from "./src/commands/unsubmitted.ts";
 import { announcementsCommand } from "./src/commands/announcements.ts";
 import { inboxCommand } from "./src/commands/inbox.ts";
+import { communicationsCommand } from "./src/commands/communications.ts";
 
 const VERSION = "0.1.0";
 
@@ -48,7 +49,8 @@ const cli = new Command()
   .command("due", dueCommand)
   .command("unsubmitted", unsubmittedCommand)
   .command("announcements", announcementsCommand)
-  .command("inbox", inboxCommand);
+  .command("inbox", inboxCommand)
+  .command("communications", communicationsCommand);
 
 // Run
 try {

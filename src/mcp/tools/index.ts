@@ -14,6 +14,7 @@ import { getRecentGradesTool } from "./get-recent-grades.ts";
 import { getComprehensiveStatusTool } from "./get-comprehensive-status.ts";
 import { getAnnouncementsTool } from "./get-announcements.ts";
 import { getInboxTool } from "./get-inbox.ts";
+import { getTeacherCommunicationsTool } from "./get-teacher-communications.ts";
 import type { AnyToolDefinition } from "../types.ts";
 
 /**
@@ -32,6 +33,7 @@ export const tools: AnyToolDefinition[] = [
   getComprehensiveStatusTool,
   getAnnouncementsTool,
   getInboxTool,
+  getTeacherCommunicationsTool,
 ];
 
 // Re-export individual tools for direct access if needed
@@ -44,6 +46,7 @@ export {
   getMissingAssignmentsTool,
   getRecentGradesTool,
   getStatsTool,
+  getTeacherCommunicationsTool,
   getTodoTool,
   getUnsubmittedPastDueTool,
   getUpcomingAssignmentsTool,

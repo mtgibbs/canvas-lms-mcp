@@ -85,6 +85,11 @@ export interface InboxItem {
   context_name: string | null;
 }
 
+export interface TeacherCommunications {
+  announcements: AnnouncementItem[];
+  inbox: InboxItem[];
+}
+
 export interface ComprehensiveStatus {
   summary: {
     total_courses: number;

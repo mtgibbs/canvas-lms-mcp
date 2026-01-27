@@ -45,3 +45,7 @@ export {
 } from "./upcoming-events.ts";
 export { getAnnouncements, type GetAnnouncementsOptions } from "./announcements.ts";
 export { getInbox, type GetInboxOptions } from "./inbox.ts";
+export {
+  getTeacherCommunications,
+  type GetTeacherCommunicationsOptions,
+} from "./communications.ts";
