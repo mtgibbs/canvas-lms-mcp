@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.13](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.12...canvas-lms-mcp-v0.2.13) (2026-01-27)
+
+
+### Features
+
+* add combined get_teacher_communications tool ([b1f3807](https://github.com/mtgibbs/canvas-lms-mcp/commit/b1f3807f667ab2b5ddfbb2813db4021d0554c899))
+
 ## [0.2.12](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.11...canvas-lms-mcp-v0.2.12) (2026-01-26)
 
 
