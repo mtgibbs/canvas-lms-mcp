@@ -21,7 +21,9 @@ export const schema = {
   course_id: z
     .number()
     .optional()
-    .describe("Filter to a specific course ID"),
+    .describe(
+      "Filter to a specific course ID. Use 'get_courses' to find this ID from a course name.",
+    ),
 };
 
 export const getAnnouncementsTool: ToolDefinition<typeof schema> = {
