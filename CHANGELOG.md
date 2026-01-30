@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.14](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.13...canvas-lms-mcp-v0.2.14) (2026-01-30)
+
+
+### Documentation
+
+* **mcp:** improve tool descriptions and schemas for better LLM usage ([#27](https://github.com/mtgibbs/canvas-lms-mcp/issues/27)) ([b3d6c05](https://github.com/mtgibbs/canvas-lms-mcp/commit/b3d6c054b5d5e6b859c0f55c8dd6f3228d786a8a))
+
 ## [0.2.13](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.12...canvas-lms-mcp-v0.2.13) (2026-01-27)
 
 
