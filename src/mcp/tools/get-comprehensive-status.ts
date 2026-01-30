@@ -34,7 +34,7 @@ export const schema = {
 export const getComprehensiveStatusTool: ToolDefinition<typeof schema> = {
   name: "get_comprehensive_status",
   description:
-    "Get a complete academic status overview: courses with current grades, missing assignments, upcoming due dates, and recent low grades. Use this for daily check-ins or comprehensive status reports.",
+    "The BEST starting point for high-level queries like 'how am I doing?', 'daily summary', or 'check my grades'. Returns a combined dashboard of courses, current grades, missing work, and upcoming tasks in a single call. Prefer this over calling individual tools for general status checks.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ student_id, days_upcoming, days_grades, low_grade_threshold }) => {
