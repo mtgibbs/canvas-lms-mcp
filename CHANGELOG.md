@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.15](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.14...canvas-lms-mcp-v0.2.15) (2026-02-02)
+
+
+### Bug Fixes
+
+* use current grading period when fetching enrollment grades ([#29](https://github.com/mtgibbs/canvas-lms-mcp/issues/29)) ([34888fd](https://github.com/mtgibbs/canvas-lms-mcp/commit/34888fd9cc5538d489c3da9ccfbefac567b40bbe))
+
 ## [0.2.14](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.13...canvas-lms-mcp-v0.2.14) (2026-01-30)
 
 
