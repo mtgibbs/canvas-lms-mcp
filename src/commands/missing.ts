@@ -16,7 +16,9 @@ import type { OutputFormat } from "../types/canvas.ts";
 
 export const missingCommand = new Command()
   .name("missing")
-  .description("List all missing/past-due assignments")
+  .description(
+    "List missing/past-due assignments (current grading period by default)",
+  )
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
@@ -30,6 +32,10 @@ export const missingCommand = new Command()
     "--include-unsubmitted",
     "Also include unsubmitted past-due assignments not yet flagged as missing",
   )
+  .option(
+    "--all-grading-periods",
+    "Include assignments from all grading periods (default: current period only)",
+  )
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
@@ -40,6 +46,7 @@ export const missingCommand = new Command()
       const counts = await getMissingCountsByCourse({
         studentId: String(studentId),
         courseId: options.courseId,
+        allGradingPeriods: options.allGradingPeriods,
       });
 
       output(counts, format, {
@@ -53,6 +60,7 @@ export const missingCommand = new Command()
     const missing = await getMissingAssignments({
       studentId: String(studentId),
       courseId: options.courseId,
+      allGradingPeriods: options.allGradingPeriods,
     });
 
     // Convert to common format for output
@@ -81,6 +89,7 @@ export const missingCommand = new Command()
       const unsubmitted = await getUnsubmittedAssignments({
         studentId: String(studentId),
         courseId: options.courseId,
+        allGradingPeriods: options.allGradingPeriods,
       });
 
       // Dedupe by course_id + name

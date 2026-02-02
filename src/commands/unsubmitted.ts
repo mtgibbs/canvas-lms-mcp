@@ -13,13 +13,17 @@ import type { OutputFormat } from "../types/canvas.ts";
 export const unsubmittedCommand = new Command()
   .name("unsubmitted")
   .description(
-    "List past-due assignments that haven't been submitted (catches items Canvas hasn't flagged as missing yet)",
+    "List past-due unsubmitted assignments (current grading period by default)",
   )
   .option("-f, --format <format:string>", "Output format (json or table)", {
     default: "json",
   })
   .option("-s, --student <id:string>", "Student ID (for observer accounts)")
   .option("-c, --course-id <id:number>", "Filter by specific course ID")
+  .option(
+    "--all-grading-periods",
+    "Include assignments from all grading periods (default: current period only)",
+  )
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
@@ -28,6 +32,7 @@ export const unsubmittedCommand = new Command()
     const results = await getUnsubmittedAssignments({
       studentId: String(studentId),
       courseId: options.courseId,
+      allGradingPeriods: options.allGradingPeriods,
     });
 
     output(results, format, {

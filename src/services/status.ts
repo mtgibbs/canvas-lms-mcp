@@ -58,6 +58,8 @@ export async function getComprehensiveStatus(
     getMissingSubmissions({
       studentId,
       include: ["course"],
+      // Only show missing assignments from current grading period to match portal
+      filter: ["current_grading_period"],
     }),
     contextCodes.length > 0
       ? listAnnouncements({

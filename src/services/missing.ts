@@ -13,17 +13,22 @@ import type { MissingAssignment } from "./types.ts";
 export interface GetMissingOptions {
   studentId?: string;
   courseId?: number;
+  /** If true, include assignments from all grading periods (default: current grading period only) */
+  allGradingPeriods?: boolean;
 }
 
 export async function getMissingAssignments(
   options: GetMissingOptions = {},
 ): Promise<MissingAssignment[]> {
-  const { studentId = "self", courseId } = options;
+  const { studentId = "self", courseId, allGradingPeriods = false } = options;
 
   const missing = await getMissingSubmissions({
     studentId,
     courseIds: courseId ? [courseId] : undefined,
     include: ["course"],
+    // By default, only show missing assignments from the current grading period
+    // This matches what parents see in the Canvas portal
+    filter: allGradingPeriods ? undefined : ["current_grading_period"],
   });
 
   return missing.map((m) => ({

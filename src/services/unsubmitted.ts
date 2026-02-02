@@ -7,19 +7,21 @@
  * - MCP: `get_unsubmitted_past_due`
  */
 
-import { listCourses } from "../api/courses.ts";
+import { getCurrentGradingPeriod, listCourses } from "../api/courses.ts";
 import { listUnsubmittedPastDueForStudent } from "../api/submissions.ts";
 import type { UnsubmittedAssignment } from "./types.ts";
 
 export interface GetUnsubmittedOptions {
   studentId: string;
   courseId?: number;
+  /** If true, include assignments from all grading periods (default: current grading period only) */
+  allGradingPeriods?: boolean;
 }
 
 export async function getUnsubmittedAssignments(
   options: GetUnsubmittedOptions,
 ): Promise<UnsubmittedAssignment[]> {
-  const { studentId, courseId } = options;
+  const { studentId, courseId, allGradingPeriods = false } = options;
 
   const courseIds: number[] = [];
   const courseMap = new Map<number, string>();
@@ -38,12 +40,38 @@ export async function getUnsubmittedAssignments(
     }
   }
 
-  // Fetch unsubmitted assignments from all courses in parallel
+  // Fetch unsubmitted assignments and current grading periods from all courses in parallel
   const unsubmittedPromises = courseIds.map(async (cid) => {
     try {
+      // Get current grading period for this course (unless showing all periods)
+      const currentPeriod = allGradingPeriods ? null : await getCurrentGradingPeriod(cid);
+
       const unsubmitted = await listUnsubmittedPastDueForStudent(cid, studentId);
       return unsubmitted
-        .filter((sub) => sub.assignment)
+        .filter((sub) => {
+          if (!sub.assignment) return false;
+
+          // If filtering by current grading period, check if submission belongs to it
+          if (currentPeriod && sub.grading_period_id !== null) {
+            // Only include if grading_period_id matches current period
+            if (sub.grading_period_id !== currentPeriod.id) {
+              return false;
+            }
+          } else if (currentPeriod && sub.grading_period_id === null) {
+            // If submission has no grading_period_id, check if due_at falls within current period
+            const dueAt = sub.assignment.due_at;
+            if (dueAt) {
+              const dueDate = new Date(dueAt);
+              const periodStart = new Date(currentPeriod.start_date);
+              const periodEnd = new Date(currentPeriod.end_date);
+              if (dueDate < periodStart || dueDate > periodEnd) {
+                return false;
+              }
+            }
+          }
+
+          return true;
+        })
         .map((sub) => ({
           id: sub.assignment!.id,
           name: sub.assignment!.name,

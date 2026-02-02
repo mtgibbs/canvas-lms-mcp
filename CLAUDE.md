@@ -80,10 +80,11 @@ canvas status --days-upcoming 7 --days-grades 14 --threshold 70
 canvas courses
 canvas courses --format table
 
-# List missing assignments
+# List missing assignments (current grading period by default)
 canvas missing
 canvas missing --summary  # counts by course
 canvas missing --course-id 12345
+canvas missing --all-grading-periods  # include old semesters
 
 # List assignments
 canvas assignments --all-courses --due-this-week
@@ -111,9 +112,10 @@ canvas due                     # next 7 days, hide graded
 canvas due --days 14           # next 14 days
 canvas due --show-graded       # include already-graded items
 
-# Past-due unsubmitted assignments
+# Past-due unsubmitted assignments (current grading period by default)
 canvas unsubmitted             # all courses
 canvas unsubmitted --course-id 12345
+canvas unsubmitted --all-grading-periods  # include old semesters
 
 # Course announcements
 canvas announcements                   # last 14 days, all courses
@@ -146,8 +148,8 @@ The MCP server exposes these tools to AI assistants:
 | Tool                         | Description                      | Key Parameters                                                         |
 | ---------------------------- | -------------------------------- | ---------------------------------------------------------------------- |
 | `get_courses`                | List courses with current grades | `student_id`                                                           |
-| `get_missing_assignments`    | Canvas-flagged missing work      | `student_id`, `course_id?`                                             |
-| `get_unsubmitted_past_due`   | Past-due but not submitted       | `student_id`, `course_id?`                                             |
+| `get_missing_assignments`    | Canvas-flagged missing work      | `student_id`, `course_id?`, `all_grading_periods?`                     |
+| `get_unsubmitted_past_due`   | Past-due but not submitted       | `student_id`, `course_id?`, `all_grading_periods?`                     |
 | `get_upcoming_assignments`   | Due soon (single course)         | `student_id`, `course_id`, `days?`                                     |
 | `get_due_this_week`          | Due soon (ALL courses)           | `student_id`, `days?`, `hide_graded?`                                  |
 | `list_assignments`           | Filter/search assignments        | `student_id`, `course_id`, `bucket?`                                   |
@@ -246,3 +248,10 @@ CANVAS_STUDENT_ID=self
    upcoming, etc.)
 5. **Parallel Requests**: When fetching from multiple courses, always use `Promise.all` to
    parallelize and reduce total request time
+6. **Grading Periods**: By default, all tools filter to the CURRENT grading period (e.g., Semester
+   2) to match what parents see in the Canvas portal. Use `--all-grading-periods` (CLI) or
+   `all_grading_periods: true` (MCP) to include data from previous semesters. This affects:
+   - `get_courses` / `courses` - Grades are for current grading period
+   - `get_missing_assignments` / `missing` - Only shows missing work from current period
+   - `get_unsubmitted_past_due` / `unsubmitted` - Only shows unsubmitted from current period
+   - `get_comprehensive_status` / `status` - All data filtered to current period
