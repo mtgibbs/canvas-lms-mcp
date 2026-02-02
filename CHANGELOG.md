@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.16](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.15...canvas-lms-mcp-v0.2.16) (2026-02-02)
+
+
+### Bug Fixes
+
+* filter missing/unsubmitted assignments by current grading period ([#31](https://github.com/mtgibbs/canvas-lms-mcp/issues/31)) ([57ad28b](https://github.com/mtgibbs/canvas-lms-mcp/commit/57ad28b87e57256211c3e907b36fe06297e6d711))
+
 ## [0.2.15](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.14...canvas-lms-mcp-v0.2.15) (2026-02-02)
 
 
