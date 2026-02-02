@@ -14,6 +14,8 @@ export interface CourseGrade {
   current_grade: string | null;
   final_score: number | null;
   final_grade: string | null;
+  /** The grading period ID these grades are from (if available) */
+  grading_period_id?: number;
 }
 
 export interface DueAssignment {

@@ -26,6 +26,23 @@ export interface Term {
   end_at: string | null;
 }
 
+/** Grading period information */
+export interface GradingPeriod {
+  id: number;
+  title: string;
+  start_date: string;
+  end_date: string;
+  close_date: string | null;
+  is_closed: boolean;
+  is_last: boolean;
+  weight: number | null;
+}
+
+/** Response wrapper for grading periods API */
+export interface GradingPeriodsResponse {
+  grading_periods: GradingPeriod[];
+}
+
 /** Enrollment object with grade information */
 export interface Enrollment {
   id: number;

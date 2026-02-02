@@ -29,5 +29,6 @@ export async function getCourses(
     current_grade: course.enrollment?.grades?.current_grade ?? null,
     final_score: course.enrollment?.grades?.final_score ?? null,
     final_grade: course.enrollment?.grades?.final_grade ?? null,
+    grading_period_id: course.gradingPeriodId,
   }));
 }
