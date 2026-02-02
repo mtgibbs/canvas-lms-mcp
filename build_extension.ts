@@ -17,23 +17,19 @@ const version = denoJson.version || "0.1.0";
 
 console.log(`Building Canvas LMS MCP Desktop Extension v${version}...\n`);
 
-// Step 1: Check if npm build exists, if not build it
-try {
-  await Deno.stat("./npm/esm/cli.js");
-  console.log("✓ npm build found");
-} catch {
-  console.log("npm build not found, building...");
-  const buildProcess = new Deno.Command("deno", {
-    args: ["task", "build:npm"],
-    stdout: "inherit",
-    stderr: "inherit",
-  });
-  const result = await buildProcess.output();
-  if (!result.success) {
-    console.error("Failed to build npm package");
-    Deno.exit(1);
-  }
+// Step 1: Always rebuild npm package to ensure latest code is included
+console.log("Building npm package...");
+const buildProcess = new Deno.Command("deno", {
+  args: ["task", "build:npm"],
+  stdout: "inherit",
+  stderr: "inherit",
+});
+const result = await buildProcess.output();
+if (!result.success) {
+  console.error("Failed to build npm package");
+  Deno.exit(1);
 }
+console.log("✓ npm package built");
 
 // Step 2: Update manifest.json version in npm directory
 console.log("\nUpdating manifest version...");
