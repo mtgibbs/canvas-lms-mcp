@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.17](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.16...canvas-lms-mcp-v0.2.17) (2026-02-02)
+
+
+### Bug Fixes
+
+* always rebuild npm package in build:extension ([#33](https://github.com/mtgibbs/canvas-lms-mcp/issues/33)) ([a09f475](https://github.com/mtgibbs/canvas-lms-mcp/commit/a09f4753132900a74f2fdbef8bb686ab7ca496c3))
+
 ## [0.2.16](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.15...canvas-lms-mcp-v0.2.16) (2026-02-02)
 
 
