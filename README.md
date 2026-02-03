@@ -297,6 +297,34 @@ Once connected, Claude has access to these capabilities:
 | `get_stats`                | Late/missing statistics by course                              |
 | `get_todo`                 | Planner items and to-do list                                   |
 
+### Grading Period Filtering
+
+By default, all tools return data for the **current grading period only** (e.g., Semester 2). This
+matches what parents see in the Canvas portal and prevents showing old assignments from previous
+semesters.
+
+**Affected tools:**
+
+- `get_courses` - Grades are for the current grading period
+- `get_missing_assignments` - Only shows missing work from the current period
+- `get_unsubmitted_past_due` - Only shows unsubmitted work from the current period
+- `get_comprehensive_status` - All data filtered to the current period
+
+**To include all grading periods** (e.g., for a full-year view), use the `all_grading_periods`
+parameter:
+
+```
+"Show me all missing assignments including previous semesters"
+→ Claude will call get_missing_assignments with all_grading_periods: true
+```
+
+For the CLI, use the `--all-grading-periods` flag:
+
+```bash
+canvas missing --all-grading-periods
+canvas unsubmitted --all-grading-periods
+```
+
 ---
 
 ## Standalone CLI
@@ -335,18 +363,20 @@ canvas courses --format table
 canvas status
 canvas status --format table
 
-# List missing assignments
+# List missing assignments (current grading period by default)
 canvas missing
 canvas missing --summary              # Counts by course
 canvas missing --include-unsubmitted  # Include past-due not yet flagged
+canvas missing --all-grading-periods  # Include previous semesters
 
 # List assignments due soon
 canvas due --days 7
 canvas due --show-graded              # Include already-graded items
 
-# List unsubmitted past-due assignments
+# List unsubmitted past-due assignments (current grading period by default)
 canvas unsubmitted
 canvas unsubmitted --course-id 12345
+canvas unsubmitted --all-grading-periods  # Include previous semesters
 
 # List assignments with filters
 canvas assignments --all-courses --due-this-week
