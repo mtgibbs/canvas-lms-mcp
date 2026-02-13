@@ -40,3 +40,33 @@
   - Context: CLAUDE.md has multiple sections that need updating: parity table (line 19-34), CLI usage (line 73-148), MCP tools table (line 155-170), architecture (line 177-210), and key endpoints (line 238-248)
 
 ---
+
+## 2026-02-13T16:15:00Z - US-018
+
+- What was implemented: Discussion Topics feature - shows discussion topics with participation status
+- Files changed:
+  - `src/types/canvas.ts`: Added DiscussionTopic type with id, title, message, posted_at, last_reply_at, discussion_type, discussion_subentry_count, unread_count, assignment_id, require_initial_post, html_url, context_code, user_name, read_state
+  - `src/api/discussions.ts`: Created API client for GET /api/v1/courses/:course_id/discussion_topics with order_by=recent_activity
+  - `src/services/types.ts`: Added DiscussionItem service type
+  - `src/services/discussions.ts`: Created service that fetches discussion topics for courses, filters to active topics, ordered by most recent activity
+  - `src/services/index.ts`: Exported discussions service
+  - `src/commands/discussions.ts`: Created CLI command with --course-id, --days, --format, --student options
+  - `main.ts`: Registered discussions command
+  - `src/mcp/tools/get-discussions.ts`: Created MCP tool with student_id, days, course_id parameters
+  - `src/mcp/tools/index.ts`: Registered get_discussions tool
+  - `CLAUDE.md`: Updated parity table, CLI usage examples, MCP tools table, architecture diagram, and key endpoints table
+
+- **Learnings for future iterations:**
+  - Pattern discovered: Discussion topics use order_by=recent_activity to sort by most recent posts/replies
+  - Pattern discovered: Check both posted_at and last_reply_at when filtering by date - use the more recent one
+  - Gotcha: When working in parallel with other agents, conflicts are common. Always pull with --rebase before pushing
+  - Gotcha: 3-strike push rule - after 3 failed push attempts, document the blocker and wait rather than spinning
+  - Context: Agent-1 was working on US-017 (Feedback) and US-019 (People) in parallel, causing merge conflicts
+  - Context: Conflict resolution: always keep BOTH features when merging parallel work - don't delete either agent's contribution
+
+## Blockers
+- After 3 attempts to push (all resulting in conflicts with agent-1's concurrent work on US-017 and US-019), documenting per 3-strike rule
+- Implementation is complete and committed locally at 581eaa8
+- Will retry push after brief wait
+
+---
