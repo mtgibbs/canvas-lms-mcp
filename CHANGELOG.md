@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.18](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.17...canvas-lms-mcp-v0.2.18) (2026-02-13)
+
+
+### Documentation
+
+* add grading period filtering documentation to README ([#35](https://github.com/mtgibbs/canvas-lms-mcp/issues/35)) ([bb5f9ab](https://github.com/mtgibbs/canvas-lms-mcp/commit/bb5f9abc132db96b5a6baca36bf9c088949d7ceb))
+
 ## [0.2.17](https://github.com/mtgibbs/canvas-lms-mcp/compare/canvas-lms-mcp-v0.2.16...canvas-lms-mcp-v0.2.17) (2026-02-02)
 
 
