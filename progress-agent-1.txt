@@ -32,3 +32,25 @@
   - Parallel requests use Promise.all - important pattern for multi-course operations
 
 ---
+## 2026-02-13T16:00:00Z - US-015
+
+- Implemented "Multi-Student Status Overview" feature
+- Files created:
+  - src/services/multi-student-status.ts - Service for fetching status for all observed students
+  - src/mcp/tools/get-all-students-status.ts - MCP tool with days_upcoming, days_grades, low_grade_threshold params
+- Files modified:
+  - src/services/types.ts - Added MultiStudentStatus interface
+  - src/services/index.ts - Exported getAllStudentsStatus service
+  - src/commands/status.ts - Added --all-students flag with multi-student table output
+  - src/mcp/tools/index.ts - Registered getAllStudentsStatusTool
+  - CLAUDE.md - Updated parity table, CLI usage, and MCP tools documentation
+- **Learnings for future iterations:**
+  - Multi-student features should reuse existing single-student services via Promise.all for parallel fetching
+  - When adding flags to existing commands, preserve original behavior - add new conditional path before the existing logic
+  - For multi-student table output, clearly separate each student with visual dividers (=== lines) and student name/ID headers
+  - MCP tool descriptions for multi-student features must emphasize: "Each student's data is clearly separated and labeled. NEVER mix data between students"
+  - When modifying existing CLI commands, the new flag should be optional and not break existing usage
+  - The import order in service exports should match alphabetical order after auto-formatting
+
+---
+
