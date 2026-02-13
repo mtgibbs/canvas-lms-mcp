@@ -16,7 +16,9 @@
       "title": "Multi-Student Status Overview",
       "description": "Add a `status --all-students` CLI flag and `get_all_students_status` MCP tool that returns a comprehensive status for ALL observed students in a single call, clearly labeled per student to prevent data mix-ups. Implementation: 1) Call the observees API (reuse the service from US-014, or call GET /api/v1/users/self/observees directly) to get all observed students, 2) For each student, call the existing getComprehensiveStatus service with that student's ID, 3) Return an array of objects: [{student_name: string, student_id: number, status: ComprehensiveStatus}, ...]. The MCP tool description must emphasize: 'Use this tool when the user asks about ALL their students or wants a combined overview. Each student\\'s data is clearly separated and labeled. NEVER mix data between students when presenting results.' The tool should accept optional params: days_upcoming (default 7), days_grades (default 7), low_grade_threshold (default 70) — same as get_comprehensive_status. For the CLI, add an --all-students flag to the existing `status` command (in src/commands/status.ts) that triggers the multi-student path. Create: 1) MultiStudentStatus type in src/services/types.ts, 2) src/services/multi-student-status.ts, 3) Export from src/services/index.ts, 4) Create src/mcp/tools/get-all-students-status.ts, 5) Register in src/mcp/tools/index.ts, 6) Modify src/commands/status.ts to add --all-students flag, 7) Update CLAUDE.md. Quality: deno task check, deno task lint, deno task fmt.",
       "priority": 2,
-      "passes": false
+      "passes": false,
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-13T15:56:15Z"
     },
     {
       "id": "US-016",
