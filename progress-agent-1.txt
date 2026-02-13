@@ -1,0 +1,34 @@
+## Codebase Patterns
+
+- **4-Layer Architecture**: API layer (src/api/) -> Service layer (src/services/) -> CLI commands (src/commands/) + MCP tools (src/mcp/tools/)
+- **Feature Parity**: Every CLI command MUST have a corresponding MCP tool and vice versa
+- **MCP Tool Schemas**: Use Zod for parameter validation. If no parameters needed, use `export const schema = {}` (no need to import `z`)
+- **Service Exports**: Always export new services from src/services/index.ts
+- **Quality Checks**: Always run `deno task check`, `deno task lint`, `deno task fmt` before committing
+- **Commit Message Format**: Use descriptive feat/fix messages with Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+---
+
+## 2026-02-13T15:40:00Z - US-014
+
+- Implemented "List & Identify Observed Students" feature
+- Files created:
+  - src/api/observees.ts - Canvas API client for /users/self/observees endpoint
+  - src/services/students.ts - Service layer for observed students
+  - src/commands/students.ts - CLI command with --format option
+  - src/mcp/tools/get-students.ts - MCP tool (no parameters needed)
+- Files modified:
+  - src/services/types.ts - Added ObservedStudent interface
+  - src/services/index.ts - Exported getObservedStudents
+  - main.ts - Registered students command
+  - src/mcp/tools/index.ts - Registered getStudentsTool
+  - CLAUDE.md - Updated parity table
+- **Learnings for future iterations:**
+  - Empty Zod schemas don't need to import `z` - avoid lint errors by omitting unused imports
+  - The User type already exists in canvas.ts, can map to simpler service types
+  - MCP tool descriptions should emphasize critical usage patterns (e.g., "Call this FIRST")
+  - CLAUDE.md parity table is the source of truth for CLI/MCP feature parity
+  - All quality checks (check, lint, fmt) must pass before committing
+  - Parallel requests use Promise.all - important pattern for multi-course operations
+
+---
