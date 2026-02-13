@@ -9,6 +9,7 @@ import { ensureClient } from "../utils/init.ts";
 import { getPeople } from "../services/index.ts";
 import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
+import type { PersonItem } from "../services/types.ts";
 
 export const peopleCommand = new Command()
   .name("people")
@@ -33,7 +34,7 @@ export const peopleCommand = new Command()
     if (format === "table") {
       output(people, "table", {
         headers: ["Name", "Role", "Email", "Courses"],
-        rowMapper: (p) => [
+        rowMapper: (p: PersonItem) => [
           p.name,
           p.role,
           p.email || "-",

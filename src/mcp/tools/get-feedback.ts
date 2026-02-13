@@ -9,9 +9,9 @@
 
 import { z } from "zod";
 import { getFeedback } from "../../services/index.ts";
-import type { Tool } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
-export const schema = z.object({
+export const schema = {
   student_id: z.string().describe(
     "Student ID (use 'self' for current user, or numeric ID from get_students tool)",
   ),
@@ -21,29 +21,21 @@ export const schema = z.object({
   days: z.number().optional().describe(
     "Look back N days for comments (default: 14)",
   ),
-});
+};
 
-export const getFeedbackTool: Tool = {
+export const getFeedbackTool: ToolDefinition<typeof schema> = {
   name: "get_feedback",
   description:
     "Get teacher comments and feedback on student submissions. Shows what teachers and TAs are saying about the student's work. Returns a list of feedback items sorted by most recent comment first, each with: assignment_name, course_name, comment_text (the teacher's comment), author_name (who commented), comment_date, student_score, points_possible, grade, and assignment URL. Use this to see detailed feedback on assignments, especially when parents want to understand teacher comments or concerns about specific work.",
-  inputSchema: schema,
-  handler: async (args) => {
-    const params = schema.parse(args);
-
+  schema,
+  annotations: { readOnlyHint: true, openWorldHint: true },
+  handler: async ({ student_id, course_id, days }) => {
     const result = await getFeedback({
-      studentId: params.student_id,
-      courseId: params.course_id,
-      days: params.days,
+      studentId: student_id,
+      courseId: course_id,
+      days: days,
     });
 
-    return {
-      content: [
-        {
-          type: "text" as const,
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    return jsonResponse(result);
   },
 };
