@@ -7,7 +7,9 @@
       "title": "List & Identify Observed Students",
       "description": "Add a `students` CLI command and `get_students` MCP tool that returns the list of students being observed by the current user (parent/observer account). Use Canvas API `GET /api/v1/users/self/observees` which returns an array of User objects for each observed student. For each student, return: id, name, short_name, and sortable_name. This tool is the FOUNDATION for multi-student support — the AI calls it first to map student names (e.g., 'Ronin', 'Rory') to Canvas student IDs, then passes the correct student_id to other tools. The tool description must emphasize: 'Call this tool FIRST when the user mentions a student by name. Use the returned student_id in subsequent tool calls. NEVER guess a student_id.' Follow the 4-layer pattern: 1) The User type already exists in src/types/canvas.ts — no new types needed, 2) Create src/api/observees.ts with a listObservees() function, 3) Create ObservedStudent service type in src/services/types.ts and src/services/students.ts, 4) Export from src/services/index.ts, 5) Create src/commands/students.ts with --format option, 6) Register in main.ts, 7) Create src/mcp/tools/get-students.ts with Zod schema (no parameters needed — it lists all observees for the authenticated user), 8) Register in src/mcp/tools/index.ts, 9) Update CLAUDE.md parity table. Quality: run deno task check, deno task lint, deno task fmt before committing.",
       "priority": 1,
-      "passes": false
+      "passes": false,
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-13T15:35:13Z"
     },
     {
       "id": "US-015",
