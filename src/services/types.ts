@@ -147,3 +147,17 @@ export interface MultiStudentStatus {
   student_id: number;
   status: ComprehensiveStatus;
 }
+
+export interface FeedbackItem {
+  assignment_id: number;
+  assignment_name: string;
+  course_id: number;
+  course_name: string;
+  comment_text: string;
+  author_name: string;
+  comment_date: string;
+  student_score: number | null;
+  points_possible: number | null;
+  grade: string | null;
+  url: string;
+}
