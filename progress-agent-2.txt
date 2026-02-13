@@ -1,0 +1,97 @@
+## Codebase Patterns
+
+- **4-layer pattern**: All features follow the same structure:
+  1. Canvas API types in `src/types/canvas.ts`
+  2. API client in `src/api/` (calls Canvas REST endpoints)
+  3. Service layer in `src/services/` (business logic shared by CLI and MCP)
+  4. CLI command in `src/commands/` + MCP tool in `src/mcp/tools/`
+
+- **CLI/MCP Parity**: Every CLI command MUST have a corresponding MCP tool with the same functionality. Update CLAUDE.md parity table when adding features.
+
+- **Service pattern**: Services accept options interfaces and return typed results. CLI and MCP both call the same service function to ensure identical behavior.
+
+- **Date filtering**: Use ISO strings for date ranges. Most tools look back N days (announcements) or forward N days (calendar, upcoming).
+
+- **Course filtering**: When fetching across all courses, use `listCoursesWithGrades()` to get active courses, then use `Promise.all()` to parallelize requests.
+
+---
+
+## 2026-02-13T15:40:00Z - US-016
+
+- What was implemented: Calendar Events feature - shows non-assignment calendar events (office hours, review sessions, school events, field trips)
+- Files changed:
+  - `src/types/canvas.ts`: Added CalendarEvent type with fields id, title, description, start_at, end_at, location_name, location_address, context_code, html_url, workflow_state
+  - `src/api/calendar.ts`: Created API client for GET /api/v1/calendar_events with type=event filter
+  - `src/services/types.ts`: Added CalendarEventItem service type
+  - `src/services/calendar.ts`: Created service that fetches calendar events for courses, filters to active events, truncates descriptions to 200 chars
+  - `src/services/index.ts`: Exported calendar service
+  - `src/commands/calendar.ts`: Created CLI command with --course-id, --days, --format, --student options
+  - `main.ts`: Registered calendar command
+  - `src/mcp/tools/get-calendar-events.ts`: Created MCP tool with student_id, days, course_id parameters
+  - `src/mcp/tools/index.ts`: Registered get_calendar_events tool
+  - `CLAUDE.md`: Updated parity table, CLI usage examples, MCP tools table, architecture diagram, and key endpoints table
+
+- **Learnings for future iterations:**
+  - Pattern discovered: Use `type=event` parameter to filter calendar events vs assignments
+  - Pattern discovered: All services that work across courses should build context_codes array (`course_${id}`) and create a courseNameMap for display
+  - Pattern discovered: Filter by workflow_state to exclude deleted/inactive items
+  - Gotcha: Description truncation is done in the service layer (not API or view layer)
+  - Gotcha: When using formatDate in CLI commands, import both `formatDate` and `output` from utils/output.ts
+  - Context: CLAUDE.md has multiple sections that need updating: parity table (line 19-34), CLI usage (line 73-148), MCP tools table (line 155-170), architecture (line 177-210), and key endpoints (line 238-248)
+
+---
+
+## 2026-02-13T16:15:00Z - US-018
+
+- What was implemented: Discussion Topics feature - shows discussion topics with participation status
+- Files changed:
+  - `src/types/canvas.ts`: Added DiscussionTopic type with id, title, message, posted_at, last_reply_at, discussion_type, discussion_subentry_count, unread_count, assignment_id, require_initial_post, html_url, context_code, user_name, read_state
+  - `src/api/discussions.ts`: Created API client for GET /api/v1/courses/:course_id/discussion_topics with order_by=recent_activity
+  - `src/services/types.ts`: Added DiscussionItem service type
+  - `src/services/discussions.ts`: Created service that fetches discussion topics for courses, filters to active topics, ordered by most recent activity
+  - `src/services/index.ts`: Exported discussions service
+  - `src/commands/discussions.ts`: Created CLI command with --course-id, --days, --format, --student options
+  - `main.ts`: Registered discussions command
+  - `src/mcp/tools/get-discussions.ts`: Created MCP tool with student_id, days, course_id parameters
+  - `src/mcp/tools/index.ts`: Registered get_discussions tool
+  - `CLAUDE.md`: Updated parity table, CLI usage examples, MCP tools table, architecture diagram, and key endpoints table
+
+- **Learnings for future iterations:**
+  - Pattern discovered: Discussion topics use order_by=recent_activity to sort by most recent posts/replies
+  - Pattern discovered: Check both posted_at and last_reply_at when filtering by date - use the more recent one
+  - Gotcha: When working in parallel with other agents, conflicts are common. Always pull with --rebase before pushing
+  - Gotcha: 3-strike push rule - after 3 failed push attempts, document the blocker and wait rather than spinning
+  - Context: Agent-1 was working on US-017 (Feedback) and US-019 (People) in parallel, causing merge conflicts
+  - Context: Conflict resolution: always keep BOTH features when merging parallel work - don't delete either agent's contribution
+
+## Blockers
+- After 3 attempts to push (all resulting in conflicts with agent-1's concurrent work on US-017 and US-019), documenting per 3-strike rule
+- Implementation is complete and committed locally at 581eaa8
+- Will retry push after brief wait
+
+---
+## 2026-02-13T17:20:00Z - US-020 + US-021
+
+- Completed US-020: Fix MCP Tool Type Patterns (3 files)
+- Completed US-021: Fix Feedback Service Import & People Command Type
+- Files modified:
+  - src/mcp/tools/get-all-students-status.ts - Fixed to use correct ToolDefinition pattern
+  - src/mcp/tools/get-feedback.ts - Fixed to use correct ToolDefinition pattern
+  - src/mcp/tools/get-people.ts - Fixed to use correct ToolDefinition pattern
+  - src/services/feedback.ts - Split imports to fix listSubmissions import from submissions.ts
+  - src/commands/people.ts - Added PersonItem type annotation to rowMapper parameter
+  - prd.json - Marked US-020 as passes: true
+
+- **Learnings for future iterations:**
+  - MCP tool pattern: Use `ToolDefinition<typeof schema>` instead of `Tool` type
+  - MCP tool pattern: Schema should be plain object `{ param: z.type() }`, NOT `z.object({ param: z.type() })`
+  - MCP tool pattern: Property name is `schema,` not `inputSchema: schema`
+  - MCP tool pattern: Handler destructures args directly: `async ({ param1, param2 }) => { ... }`
+  - MCP tool pattern: Handler returns `jsonResponse(data)` instead of raw content array
+  - MCP tool pattern: Always include `annotations: { readOnlyHint: true, openWorldHint: true }`
+  - When fixing imports, check which module actually exports the function (listSubmissions from submissions.ts, not users.ts)
+  - For type annotation errors in map callbacks, import the type and annotate the parameter or use inline type annotation
+  - All quality checks must pass: check (zero type errors), lint (zero lint errors), fmt (all formatted)
+  - When fixing multiple related stories, can combine them in a single commit if they're closely related
+
+---

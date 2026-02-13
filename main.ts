@@ -20,6 +20,11 @@ import { unsubmittedCommand } from "./src/commands/unsubmitted.ts";
 import { announcementsCommand } from "./src/commands/announcements.ts";
 import { inboxCommand } from "./src/commands/inbox.ts";
 import { communicationsCommand } from "./src/commands/communications.ts";
+import { studentsCommand } from "./src/commands/students.ts";
+import { calendarCommand } from "./src/commands/calendar.ts";
+import { feedbackCommand } from "./src/commands/feedback.ts";
+import { peopleCommand } from "./src/commands/people.ts";
+import { discussionsCommand } from "./src/commands/discussions.ts";
 
 const VERSION = "0.1.0";
 
@@ -50,7 +55,12 @@ const cli = new Command()
   .command("unsubmitted", unsubmittedCommand)
   .command("announcements", announcementsCommand)
   .command("inbox", inboxCommand)
-  .command("communications", communicationsCommand);
+  .command("communications", communicationsCommand)
+  .command("students", studentsCommand)
+  .command("calendar", calendarCommand)
+  .command("feedback", feedbackCommand)
+  .command("people", peopleCommand)
+  .command("discussions", discussionsCommand);
 
 // Run
 try {

@@ -6,7 +6,7 @@
 import { Command } from "@cliffy/command";
 import { output } from "../utils/output.ts";
 import { ensureClient } from "../utils/init.ts";
-import { getComprehensiveStatus } from "../services/index.ts";
+import { getAllStudentsStatus, getComprehensiveStatus } from "../services/index.ts";
 import { getEffectiveStudentId } from "../api/users.ts";
 import type { OutputFormat } from "../types/canvas.ts";
 
@@ -19,6 +19,10 @@ export const statusCommand = new Command()
     default: "json",
   })
   .option("-s, --student <id:string>", "Student ID (for observer accounts)")
+  .option(
+    "--all-students",
+    "Get status for ALL observed students (parent/observer accounts)",
+  )
   .option(
     "--days-upcoming <days:number>",
     "Days to look ahead for upcoming assignments",
@@ -37,6 +41,118 @@ export const statusCommand = new Command()
   .action(async (options) => {
     await ensureClient();
     const format = options.format as OutputFormat;
+
+    // Multi-student path
+    if (options.allStudents) {
+      const allStudentsStatus = await getAllStudentsStatus({
+        daysUpcoming: options.daysUpcoming,
+        daysGrades: options.daysGrades,
+        lowGradeThreshold: options.threshold,
+      });
+
+      if (format === "table") {
+        for (const studentStatus of allStudentsStatus) {
+          console.log(`\n${"=".repeat(80)}`);
+          console.log(`STUDENT: ${studentStatus.student_name} (ID: ${studentStatus.student_id})`);
+          console.log("=".repeat(80));
+
+          const statusData = studentStatus.status;
+
+          // Print summary
+          console.log("\n=== ACADEMIC STATUS ===\n");
+          console.log(`Courses: ${statusData.summary.total_courses}`);
+          console.log(
+            `Missing assignments: ${statusData.summary.missing_assignments}`,
+          );
+          console.log(
+            `Upcoming (next ${options.daysUpcoming} days): ${statusData.summary.upcoming_assignments}`,
+          );
+          console.log(
+            `Low grades (last ${options.daysGrades} days, <${options.threshold}%): ${statusData.summary.recent_low_grades}`,
+          );
+          console.log(
+            `Recent announcements (last 7 days): ${statusData.summary.recent_announcements}`,
+          );
+
+          // Courses with grades
+          console.log("\n--- CURRENT GRADES ---");
+          output(statusData.courses, "table", {
+            headers: ["Course", "Score", "Grade"],
+            rowMapper: (c) => [
+              c.name,
+              c.current_score !== null ? `${c.current_score}%` : "-",
+              c.current_grade || "-",
+            ],
+          });
+
+          // Missing
+          if (statusData.missing_assignments.length > 0) {
+            console.log("\n--- MISSING ASSIGNMENTS ---");
+            output(statusData.missing_assignments, "table", {
+              headers: ["Course", "Assignment", "Due", "Points"],
+              rowMapper: (m) => [
+                m.course_name,
+                m.name,
+                m.due_at ? new Date(m.due_at).toLocaleDateString() : "-",
+                m.points_possible ?? "-",
+              ],
+            });
+          }
+
+          // Upcoming
+          if (statusData.upcoming_assignments.length > 0) {
+            console.log("\n--- UPCOMING ASSIGNMENTS ---");
+            output(statusData.upcoming_assignments, "table", {
+              headers: ["Course", "Assignment", "Due", "Points", "Submitted"],
+              rowMapper: (u) => [
+                u.course_name,
+                u.assignment_name,
+                new Date(u.due_at).toLocaleDateString(),
+                u.points_possible ?? "-",
+                u.submitted ? "Yes" : "No",
+              ],
+            });
+          }
+
+          // Low grades
+          if (statusData.recent_low_grades.length > 0) {
+            console.log("\n--- RECENT LOW GRADES ---");
+            output(statusData.recent_low_grades, "table", {
+              headers: ["Course", "Assignment", "Score", "Points", "%"],
+              rowMapper: (g) => [
+                g.course_name,
+                g.assignment_name,
+                g.score ?? "-",
+                g.points_possible,
+                g.percentage !== null ? `${g.percentage}%` : "-",
+              ],
+            });
+          }
+
+          // Announcements
+          if (statusData.recent_announcements.length > 0) {
+            console.log("\n--- RECENT ANNOUNCEMENTS ---");
+            output(statusData.recent_announcements, "table", {
+              headers: ["Course", "Title", "Author", "Posted"],
+              rowMapper: (a) => [
+                a.course_name,
+                a.title,
+                a.author_name,
+                new Date(a.posted_at).toLocaleDateString(),
+              ],
+            });
+          }
+        }
+      } else {
+        output(allStudentsStatus, "json", {
+          headers: [],
+          rowMapper: () => [],
+        });
+      }
+      return;
+    }
+
+    // Single student path (original behavior)
     const studentId = await getEffectiveStudentId(options.student);
 
     const statusData = await getComprehensiveStatus({

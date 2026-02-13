@@ -86,6 +86,7 @@ export interface User {
   login_id?: string;
   email?: string;
   avatar_url?: string;
+  enrollments?: Enrollment[];
 }
 
 /** Assignment object */
@@ -272,6 +273,20 @@ export interface PlannerSubmissionStatus {
   redo_request: boolean;
 }
 
+/** Calendar event (non-assignment events like office hours, school events, etc.) */
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  description: string | null;
+  start_at: string;
+  end_at: string | null;
+  location_name: string | null;
+  location_address: string | null;
+  context_code: string;
+  html_url: string;
+  workflow_state: "active" | "deleted";
+}
+
 /** Announcement (discussion topic with is_announcement=true) */
 export interface Announcement {
   id: number;
@@ -303,6 +318,24 @@ export interface Conversation {
   message_count: number;
   participants: ConversationParticipant[];
   context_name: string | null;
+}
+
+/** Discussion topic */
+export interface DiscussionTopic {
+  id: number;
+  title: string;
+  message: string | null;
+  posted_at: string;
+  last_reply_at: string | null;
+  discussion_type: "side_comment" | "threaded";
+  discussion_subentry_count: number;
+  unread_count: number;
+  assignment_id: number | null;
+  require_initial_post: boolean;
+  html_url: string;
+  context_code: string;
+  user_name: string;
+  read_state: "read" | "unread";
 }
 
 /** Canvas API pagination info parsed from Link header */

@@ -15,6 +15,12 @@ import { getComprehensiveStatusTool } from "./get-comprehensive-status.ts";
 import { getAnnouncementsTool } from "./get-announcements.ts";
 import { getInboxTool } from "./get-inbox.ts";
 import { getTeacherCommunicationsTool } from "./get-teacher-communications.ts";
+import { getStudentsTool } from "./get-students.ts";
+import { getCalendarEventsTool } from "./get-calendar-events.ts";
+import { getAllStudentsStatusTool } from "./get-all-students-status.ts";
+import { getFeedbackTool } from "./get-feedback.ts";
+import { getPeopleTool } from "./get-people.ts";
+import { getDiscussionsTool } from "./get-discussions.ts";
 import type { AnyToolDefinition } from "../types.ts";
 
 /**
@@ -34,18 +40,30 @@ export const tools: AnyToolDefinition[] = [
   getAnnouncementsTool,
   getInboxTool,
   getTeacherCommunicationsTool,
+  getStudentsTool,
+  getCalendarEventsTool,
+  getAllStudentsStatusTool,
+  getFeedbackTool,
+  getPeopleTool,
+  getDiscussionsTool,
 ];
 
 // Re-export individual tools for direct access if needed
 export {
+  getAllStudentsStatusTool,
   getAnnouncementsTool,
+  getCalendarEventsTool,
   getComprehensiveStatusTool,
   getCoursesTool,
+  getDiscussionsTool,
   getDueThisWeekTool,
+  getFeedbackTool,
   getInboxTool,
   getMissingAssignmentsTool,
+  getPeopleTool,
   getRecentGradesTool,
   getStatsTool,
+  getStudentsTool,
   getTeacherCommunicationsTool,
   getTodoTool,
   getUnsubmittedPastDueTool,

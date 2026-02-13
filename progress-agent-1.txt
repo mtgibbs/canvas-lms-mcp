@@ -1,0 +1,121 @@
+## Codebase Patterns
+
+- **4-Layer Architecture**: API layer (src/api/) -> Service layer (src/services/) -> CLI commands (src/commands/) + MCP tools (src/mcp/tools/)
+- **Feature Parity**: Every CLI command MUST have a corresponding MCP tool and vice versa
+- **MCP Tool Schemas**: Use Zod for parameter validation. If no parameters needed, use `export const schema = {}` (no need to import `z`)
+- **Service Exports**: Always export new services from src/services/index.ts
+- **Quality Checks**: Always run `deno task check`, `deno task lint`, `deno task fmt` before committing
+- **Commit Message Format**: Use descriptive feat/fix messages with Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+---
+
+## 2026-02-13T15:40:00Z - US-014
+
+- Implemented "List & Identify Observed Students" feature
+- Files created:
+  - src/api/observees.ts - Canvas API client for /users/self/observees endpoint
+  - src/services/students.ts - Service layer for observed students
+  - src/commands/students.ts - CLI command with --format option
+  - src/mcp/tools/get-students.ts - MCP tool (no parameters needed)
+- Files modified:
+  - src/services/types.ts - Added ObservedStudent interface
+  - src/services/index.ts - Exported getObservedStudents
+  - main.ts - Registered students command
+  - src/mcp/tools/index.ts - Registered getStudentsTool
+  - CLAUDE.md - Updated parity table
+- **Learnings for future iterations:**
+  - Empty Zod schemas don't need to import `z` - avoid lint errors by omitting unused imports
+  - The User type already exists in canvas.ts, can map to simpler service types
+  - MCP tool descriptions should emphasize critical usage patterns (e.g., "Call this FIRST")
+  - CLAUDE.md parity table is the source of truth for CLI/MCP feature parity
+  - All quality checks (check, lint, fmt) must pass before committing
+  - Parallel requests use Promise.all - important pattern for multi-course operations
+
+---
+## 2026-02-13T16:00:00Z - US-015
+
+- Implemented "Multi-Student Status Overview" feature
+- Files created:
+  - src/services/multi-student-status.ts - Service for fetching status for all observed students
+  - src/mcp/tools/get-all-students-status.ts - MCP tool with days_upcoming, days_grades, low_grade_threshold params
+- Files modified:
+  - src/services/types.ts - Added MultiStudentStatus interface
+  - src/services/index.ts - Exported getAllStudentsStatus service
+  - src/commands/status.ts - Added --all-students flag with multi-student table output
+  - src/mcp/tools/index.ts - Registered getAllStudentsStatusTool
+  - CLAUDE.md - Updated parity table, CLI usage, and MCP tools documentation
+- **Learnings for future iterations:**
+  - Multi-student features should reuse existing single-student services via Promise.all for parallel fetching
+  - When adding flags to existing commands, preserve original behavior - add new conditional path before the existing logic
+  - For multi-student table output, clearly separate each student with visual dividers (=== lines) and student name/ID headers
+  - MCP tool descriptions for multi-student features must emphasize: "Each student's data is clearly separated and labeled. NEVER mix data between students"
+  - When modifying existing CLI commands, the new flag should be optional and not break existing usage
+  - The import order in service exports should match alphabetical order after auto-formatting
+
+---
+
+## 2026-02-13T16:15:00Z - US-017
+
+- Implemented "Submission Feedback & Comments" feature
+- Files created:
+  - src/services/feedback.ts - Service for fetching teacher comments on submissions
+  - src/commands/feedback.ts - CLI command with --course-id, --days, --format, --student options
+  - src/mcp/tools/get-feedback.ts - MCP tool with student_id, course_id, days params
+- Files modified:
+  - src/services/types.ts - Added FeedbackItem interface
+  - src/services/index.ts - Exported getFeedback service
+  - main.ts - Registered feedback command
+  - src/mcp/tools/index.ts - Registered getFeedbackTool
+  - CLAUDE.md - Updated parity table and CLI usage examples
+- **Learnings for future iterations:**
+  - When reusing existing API modules (like submissions.ts), don't need to create new API layer - can use listSubmissions directly from service
+  - SubmissionComment type already exists in canvas.ts - check existing types before adding new ones
+  - Filter submissions by presence of submission_comments array and its length > 0
+  - Comments should be filtered by created_at date, not submission date
+  - For each comment, create a separate FeedbackItem to allow proper sorting by comment date
+  - Table output for long text fields (like comment_text) should truncate with "..." for readability
+  - MCP tool descriptions should emphasize the use case: "Critical for parents who want to see what teachers are saying"
+
+---
+
+## 2026-02-13T16:30:00Z - US-019
+
+- Implemented "Course People (Teachers & TAs)" feature
+- Files created:
+  - src/api/people.ts - API client for GET /api/v1/courses/:course_id/users endpoint
+  - src/services/people.ts - Service with deduplication logic for people across courses
+  - src/commands/people.ts - CLI command with --course-id, --format, --student options
+  - src/mcp/tools/get-people.ts - MCP tool with student_id, course_id params
+- Files modified:
+  - src/types/canvas.ts - Added optional enrollments field to User interface
+  - src/services/types.ts - Added PersonItem interface
+  - src/services/index.ts - Exported getPeople service
+  - main.ts - Registered people command
+  - src/mcp/tools/index.ts - Registered getPeopleTool
+  - CLAUDE.md - Updated parity table, CLI usage, and MCP tools table
+- **Learnings for future iterations:**
+  - When API returns fields not in the TypeScript interface (like enrollments on User), update the interface to include them as optional fields
+  - Deduplication logic: Use Map<userId, person> to group by ID, then aggregate courses for each person
+  - Enrollment type can be "TeacherEnrollment" or "TaEnrollment" - check the type field to determine role
+  - When fetching users with enrollment_type filter, pass as array: ["teacher", "ta"]
+  - include parameter should be array: ["email", "enrollments"]
+  - Sort results by name for better UX (both people and their courses arrays)
+  - For multi-course display in table format, use .join(", ") to show all course names in one column
+
+---
+
+## 2026-02-13T17:20:00Z - US-021
+
+- Fixed type errors in feedback.ts and people.ts
+- Files modified:
+  - src/services/feedback.ts - Split imports: listSubmissions from submissions.ts, resolveUserId from users.ts
+  - src/commands/people.ts - Added type annotation to courses map callback: `(c: { id: number; name: string })`
+- **Learnings for future iterations:**
+  - Always verify which module exports which functions - listSubmissions is in submissions.ts, not users.ts
+  - Type annotations can be added inline when the full type isn't needed (e.g., for map callbacks)
+  - After fixing import errors, implicit `any` errors on variables using those types are automatically resolved
+  - The fix for feedback.ts also resolved implicit `any` on `sub` and `comment` variables since Submission type is now properly imported
+  - Small focused commits are better than batching multiple fixes together
+  
+---
+

@@ -1,0 +1,25 @@
+#
+# Dockerfile.ralph — Ralph agent image with Deno for canvas-lms-mcp.
+#
+# Build:
+#   docker build --platform linux/arm64 -f Dockerfile.ralph -t canvas-ralph-agent:latest .
+#
+# Requires ralph-agent:latest to be built first:
+#   cd /path/to/ralph && docker build --platform linux/arm64 -t ralph-agent:latest docker/
+#
+
+FROM ralph-agent:latest
+
+USER root
+
+# Deno requires unzip for the install script
+RUN apt-get update && apt-get install -y --no-install-recommends unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Deno to /usr/local/bin so it's on PATH for all users
+RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
+
+USER agent
+
+# Verify Deno is available
+RUN deno --version

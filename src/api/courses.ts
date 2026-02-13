@@ -198,7 +198,9 @@ export async function listCoursesWithGrades(
 
     const enrollmentResults = await Promise.all(enrollmentPromises);
     const enrollmentMap = new Map(
-      enrollmentResults.map((r) => [r.courseId, { enrollment: r.enrollment, gradingPeriodId: r.gradingPeriodId }]),
+      enrollmentResults.map((
+        r,
+      ) => [r.courseId, { enrollment: r.enrollment, gradingPeriodId: r.gradingPeriodId }]),
     );
 
     return courses.map((course) => {

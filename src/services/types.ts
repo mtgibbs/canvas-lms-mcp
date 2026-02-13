@@ -87,6 +87,19 @@ export interface InboxItem {
   context_name: string | null;
 }
 
+export interface CalendarEventItem {
+  id: number;
+  title: string;
+  description: string | null;
+  start_at: string;
+  end_at: string | null;
+  location_name: string | null;
+  location_address: string | null;
+  course_id: number;
+  course_name: string;
+  url: string;
+}
+
 export interface TeacherCommunications {
   announcements: AnnouncementItem[];
   inbox: InboxItem[];
@@ -120,4 +133,53 @@ export interface CourseStats {
   late_count: number;
   missing_count: number;
   total_assignments: number;
+}
+
+export interface ObservedStudent {
+  id: number;
+  name: string;
+  short_name: string;
+  sortable_name: string;
+}
+
+export interface MultiStudentStatus {
+  student_name: string;
+  student_id: number;
+  status: ComprehensiveStatus;
+}
+
+export interface FeedbackItem {
+  assignment_id: number;
+  assignment_name: string;
+  course_id: number;
+  course_name: string;
+  comment_text: string;
+  author_name: string;
+  comment_date: string;
+  student_score: number | null;
+  points_possible: number | null;
+  grade: string | null;
+  url: string;
+}
+
+export interface PersonItem {
+  name: string;
+  role: "Teacher" | "TA";
+  email: string | null;
+  courses: Array<{ id: number; name: string }>;
+}
+
+export interface DiscussionItem {
+  id: number;
+  title: string;
+  course_id: number;
+  course_name: string;
+  posted_at: string;
+  last_reply_at: string | null;
+  discussion_type: "side_comment" | "threaded";
+  reply_count: number;
+  unread_count: number;
+  is_graded: boolean;
+  requires_initial_post: boolean;
+  url: string;
 }
