@@ -16,16 +16,16 @@
       "title": "Multi-Student Status Overview",
       "description": "Add a `status --all-students` CLI flag and `get_all_students_status` MCP tool that returns a comprehensive status for ALL observed students in a single call, clearly labeled per student to prevent data mix-ups. Implementation: 1) Call the observees API (reuse the service from US-014, or call GET /api/v1/users/self/observees directly) to get all observed students, 2) For each student, call the existing getComprehensiveStatus service with that student's ID, 3) Return an array of objects: [{student_name: string, student_id: number, status: ComprehensiveStatus}, ...]. The MCP tool description must emphasize: 'Use this tool when the user asks about ALL their students or wants a combined overview. Each student\\'s data is clearly separated and labeled. NEVER mix data between students when presenting results.' The tool should accept optional params: days_upcoming (default 7), days_grades (default 7), low_grade_threshold (default 70) — same as get_comprehensive_status. For the CLI, add an --all-students flag to the existing `status` command (in src/commands/status.ts) that triggers the multi-student path. Create: 1) MultiStudentStatus type in src/services/types.ts, 2) src/services/multi-student-status.ts, 3) Export from src/services/index.ts, 4) Create src/mcp/tools/get-all-students-status.ts, 5) Register in src/mcp/tools/index.ts, 6) Modify src/commands/status.ts to add --all-students flag, 7) Update CLAUDE.md. Quality: deno task check, deno task lint, deno task fmt.",
       "priority": 2,
-      "passes": false,
-      "claimed_by": "agent-2",
-      "claimed_at": "2026-02-13T15:35:13Z"
+      "passes": false
     },
     {
       "id": "US-016",
       "title": "Calendar Events",
       "description": "Add a `calendar` CLI command and `get_calendar_events` MCP tool that shows non-assignment calendar events (office hours, review sessions, school events, field trips, etc.). Use Canvas API `GET /api/v1/calendar_events` with `type=event` (NOT assignment — assignments are already covered by other tools), `context_codes[]=course_<id>` for course filtering, and `start_date`/`end_date` for date range. For each event show: title, description (truncated to ~200 chars), start_at, end_at, location_name, location_address, course name, and URL. The service should accept `student_id` (optional, for observer course list), `course_id` (optional — if omitted, include all active courses by building context_codes from the courses list), and `days` (optional, default 14, look ahead N days from today). This is DIFFERENT from the existing `upcoming` command which shows assignment due dates from `/users/:id/upcoming_events`. Follow the 4-layer pattern: 1) Add CalendarEvent type to src/types/canvas.ts with fields: id, title, description, start_at, end_at, location_name, location_address, context_code, html_url, workflow_state, 2) Create src/api/calendar.ts, 3) Create CalendarEventItem service type in src/services/types.ts and src/services/calendar.ts, 4) Export from src/services/index.ts, 5) Create src/commands/calendar.ts with --course-id, --days, --format, --student options, 6) Register in main.ts, 7) Create src/mcp/tools/get-calendar-events.ts with Zod schema, 8) Register in src/mcp/tools/index.ts, 9) Update CLAUDE.md parity table. Quality: deno task check, deno task lint, deno task fmt.",
       "priority": 3,
-      "passes": false
+      "passes": false,
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-13T15:36:00Z"
     },
     {
       "id": "US-017",
