@@ -52,7 +52,7 @@
       "title": "Course People (Teachers & TAs)",
       "description": "Add a `people` CLI command and `get_people` MCP tool that shows teachers and teaching assistants for courses. This helps parents know who teaches each course and how to contact them. Use Canvas API `GET /api/v1/courses/:course_id/users` with `enrollment_type[]=teacher&enrollment_type[]=ta` and `include[]=email,enrollments`. For each person return: name, role (Teacher or TA, derived from their enrollment type), email (if available), course_id, course_name. The service should accept `student_id` (optional, for observer course list) and `course_id` (optional — if omitted, fetch from all active courses via Promise.all). When fetching across all courses, deduplicate people who appear in multiple courses — instead of listing them multiple times, list them once with an array of their courses (e.g., {name: 'Ms. Smith', role: 'Teacher', email: '...', courses: [{id: 1, name: 'Math'}, {id: 2, name: 'Science'}]}). Follow the 4-layer pattern: 1) No new Canvas API types needed (User and Enrollment types exist), 2) Create src/api/people.ts, 3) Create PersonItem service type in src/services/types.ts and src/services/people.ts, 4) Export from src/services/index.ts, 5) Create src/commands/people.ts with --course-id, --format, --student options, 6) Register in main.ts, 7) Create src/mcp/tools/get-people.ts with Zod schema, 8) Register in src/mcp/tools/index.ts, 9) Update CLAUDE.md parity table. Quality: deno task check, deno task lint, deno task fmt.",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "claimed_by": "agent-1",
       "claimed_at": "2026-02-13T16:20:00Z"
     }
