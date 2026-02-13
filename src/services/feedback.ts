@@ -8,7 +8,8 @@
  */
 
 import { listCoursesWithGrades } from "../api/courses.ts";
-import { listSubmissions, resolveUserId } from "../api/users.ts";
+import { listSubmissions } from "../api/submissions.ts";
+import { resolveUserId } from "../api/users.ts";
 import type { FeedbackItem } from "./types.ts";
 
 export interface GetFeedbackOptions {

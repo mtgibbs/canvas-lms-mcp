@@ -37,7 +37,7 @@ export const peopleCommand = new Command()
           p.name,
           p.role,
           p.email || "-",
-          p.courses.map((c) => c.name).join(", "),
+          p.courses.map((c: { id: number; name: string }) => c.name).join(", "),
         ],
       });
     } else {
