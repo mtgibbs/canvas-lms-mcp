@@ -54,3 +54,4 @@ export { getCalendarEvents, type GetCalendarEventsOptions } from "./calendar.ts"
 export { getAllStudentsStatus, type GetAllStudentsStatusOptions } from "./multi-student-status.ts";
 export { getFeedback, type GetFeedbackOptions } from "./feedback.ts";
 export { getPeople, type GetPeopleOptions } from "./people.ts";
+export { getDiscussions, type GetDiscussionsOptions } from "./discussions.ts";

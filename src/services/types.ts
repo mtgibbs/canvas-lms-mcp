@@ -168,3 +168,18 @@ export interface PersonItem {
   email: string | null;
   courses: Array<{ id: number; name: string }>;
 }
+
+export interface DiscussionItem {
+  id: number;
+  title: string;
+  course_id: number;
+  course_name: string;
+  posted_at: string;
+  last_reply_at: string | null;
+  discussion_type: "side_comment" | "threaded";
+  reply_count: number;
+  unread_count: number;
+  is_graded: boolean;
+  requires_initial_post: boolean;
+  url: string;
+}

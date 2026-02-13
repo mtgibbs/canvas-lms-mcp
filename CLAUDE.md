@@ -36,6 +36,7 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 | `status --all-students` | `get_all_students_status`    | Multi-student status overview            |
 | `feedback`              | `get_feedback`               | Teacher comments on submissions          |
 | `people`                | `get_people`                 | Teachers & TAs for courses               |
+| `discussions`           | `get_discussions`            | Discussion topics with participation     |
 
 **Before completing any feature work:**
 
@@ -159,6 +160,12 @@ canvas people                          # all courses
 canvas people --course-id 12345        # specific course
 canvas people --format table
 
+# Discussion topics (with participation status)
+canvas discussions                     # last 30 days, all courses
+canvas discussions --days 14           # last 14 days
+canvas discussions --course-id 12345   # specific course
+canvas discussions --format table
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (uses CANVAS_STUDENT_ID from config if not specified)
@@ -187,6 +194,7 @@ The MCP server exposes these tools to AI assistants:
 | `get_all_students_status`    | **Multi-student overview**       | `days_upcoming?`, `days_grades?`, `low_grade_threshold?`               |
 | `get_feedback`               | Teacher comments on submissions  | `student_id`, `course_id?`, `days?`                                    |
 | `get_people`                 | Teachers & TAs for courses       | `student_id?`, `course_id?`                                            |
+| `get_discussions`            | Discussion topics                | `student_id`, `days?`, `course_id?`                                    |
 
 **Recommended for daily check-ins:**
 
@@ -202,12 +210,12 @@ src/
 ├── api/           # Canvas API client (shared by CLI and MCP)
 │   ├── client.ts  # HTTP client with auth and pagination
 │   ├── courses.ts, assignments.ts, submissions.ts, users.ts, enrollments.ts
-│   ├── announcements.ts, conversations.ts, calendar.ts
+│   ├── announcements.ts, conversations.ts, calendar.ts, discussions.ts
 ├── commands/      # CLI commands (Cliffy)
 │   ├── courses.ts, missing.ts, assignments.ts, grades.ts
 │   ├── upcoming.ts, todo.ts, stats.ts, status.ts
 │   ├── due.ts, unsubmitted.ts
-│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts
+│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts, discussions.ts
 ├── mcp/           # MCP server components
 │   ├── server.ts  # Server setup and tool registration
 │   ├── types.ts   # Tool definition types
@@ -215,7 +223,7 @@ src/
 │   │   ├── get-courses.ts, get-missing-assignments.ts, ...
 │   │   ├── get-recent-grades.ts, get-comprehensive-status.ts
 │   │   ├── get-announcements.ts, get-inbox.ts, get-teacher-communications.ts
-│   │   ├── get-calendar-events.ts
+│   │   ├── get-calendar-events.ts, get-discussions.ts
 │   │   └── index.ts  # Tool registry
 │   └── prompts/   # MCP prompts (conversation starters)
 │       ├── daily-checkin.ts, week-planning.ts, ...
@@ -225,7 +233,7 @@ src/
 │   ├── courses.ts, missing.ts, assignments.ts, grades.ts
 │   ├── upcoming.ts, todo.ts, stats.ts, status.ts
 │   ├── due.ts, unsubmitted.ts, upcoming-events.ts
-│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts
+│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts, discussions.ts
 ├── types/
 │   └── canvas.ts  # TypeScript interfaces for Canvas API
 └── utils/
@@ -270,6 +278,7 @@ CANVAS_STUDENT_ID=self
 | announcements | `GET /api/v1/announcements` with context_codes |
 | inbox         | `GET /api/v1/conversations`                    |
 | calendar      | `GET /api/v1/calendar_events` with type=event  |
+| discussions   | `GET /api/v1/courses/:id/discussion_topics`    |
 
 ## Important Canvas API Behaviors
 

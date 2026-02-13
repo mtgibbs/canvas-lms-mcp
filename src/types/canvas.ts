@@ -320,6 +320,24 @@ export interface Conversation {
   context_name: string | null;
 }
 
+/** Discussion topic */
+export interface DiscussionTopic {
+  id: number;
+  title: string;
+  message: string | null;
+  posted_at: string;
+  last_reply_at: string | null;
+  discussion_type: "side_comment" | "threaded";
+  discussion_subentry_count: number;
+  unread_count: number;
+  assignment_id: number | null;
+  require_initial_post: boolean;
+  html_url: string;
+  context_code: string;
+  user_name: string;
+  read_state: "read" | "unread";
+}
+
 /** Canvas API pagination info parsed from Link header */
 export interface PaginationLinks {
   current?: string;

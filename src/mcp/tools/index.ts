@@ -20,6 +20,7 @@ import { getCalendarEventsTool } from "./get-calendar-events.ts";
 import { getAllStudentsStatusTool } from "./get-all-students-status.ts";
 import { getFeedbackTool } from "./get-feedback.ts";
 import { getPeopleTool } from "./get-people.ts";
+import { getDiscussionsTool } from "./get-discussions.ts";
 import type { AnyToolDefinition } from "../types.ts";
 
 /**
@@ -44,6 +45,7 @@ export const tools: AnyToolDefinition[] = [
   getAllStudentsStatusTool,
   getFeedbackTool,
   getPeopleTool,
+  getDiscussionsTool,
 ];
 
 // Re-export individual tools for direct access if needed
@@ -53,6 +55,7 @@ export {
   getCalendarEventsTool,
   getComprehensiveStatusTool,
   getCoursesTool,
+  getDiscussionsTool,
   getDueThisWeekTool,
   getFeedbackTool,
   getInboxTool,
