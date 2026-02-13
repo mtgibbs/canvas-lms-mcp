@@ -70,3 +70,28 @@
 - Will retry push after brief wait
 
 ---
+## 2026-02-13T17:20:00Z - US-020 + US-021
+
+- Completed US-020: Fix MCP Tool Type Patterns (3 files)
+- Completed US-021: Fix Feedback Service Import & People Command Type
+- Files modified:
+  - src/mcp/tools/get-all-students-status.ts - Fixed to use correct ToolDefinition pattern
+  - src/mcp/tools/get-feedback.ts - Fixed to use correct ToolDefinition pattern
+  - src/mcp/tools/get-people.ts - Fixed to use correct ToolDefinition pattern
+  - src/services/feedback.ts - Split imports to fix listSubmissions import from submissions.ts
+  - src/commands/people.ts - Added PersonItem type annotation to rowMapper parameter
+  - prd.json - Marked US-020 as passes: true
+
+- **Learnings for future iterations:**
+  - MCP tool pattern: Use `ToolDefinition<typeof schema>` instead of `Tool` type
+  - MCP tool pattern: Schema should be plain object `{ param: z.type() }`, NOT `z.object({ param: z.type() })`
+  - MCP tool pattern: Property name is `schema,` not `inputSchema: schema`
+  - MCP tool pattern: Handler destructures args directly: `async ({ param1, param2 }) => { ... }`
+  - MCP tool pattern: Handler returns `jsonResponse(data)` instead of raw content array
+  - MCP tool pattern: Always include `annotations: { readOnlyHint: true, openWorldHint: true }`
+  - When fixing imports, check which module actually exports the function (listSubmissions from submissions.ts, not users.ts)
+  - For type annotation errors in map callbacks, import the type and annotate the parameter or use inline type annotation
+  - All quality checks must pass: check (zero type errors), lint (zero lint errors), fmt (all formatted)
+  - When fixing multiple related stories, can combine them in a single commit if they're closely related
+
+---

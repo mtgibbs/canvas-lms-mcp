@@ -7,7 +7,7 @@
       "title": "Fix MCP Tool Type Patterns (3 files)",
       "description": "Three MCP tool files use the wrong type pattern and fail `deno task check`. Fix them to match the correct pattern used by working tools like src/mcp/tools/get-announcements.ts and src/mcp/tools/get-calendar-events.ts.\n\nFiles to fix:\n- src/mcp/tools/get-all-students-status.ts\n- src/mcp/tools/get-feedback.ts\n- src/mcp/tools/get-people.ts\n\nAll three have the SAME errors:\n1. Import `type { Tool }` — but `Tool` does not exist in ../types.ts. Change to: `import { jsonResponse, type ToolDefinition } from \"../types.ts\";`\n2. Schema is wrapped in `z.object({...})` — should be a plain object of Zod types (no z.object wrapper). Change from `export const schema = z.object({ ... })` to `export const schema = { ... }`\n3. Property name `inputSchema: schema` — should be just `schema,`\n4. Type annotation uses `Tool` — should be `ToolDefinition<typeof schema>`\n5. Handler uses `async (args) => { const params = schema.parse(args); ... }` — should destructure args directly: `async ({ param1, param2 }) => { ... }`\n6. Handler returns `{ content: [{ type: \"text\" as const, text: JSON.stringify(...) }] }` — should use `return jsonResponse(data);`\n7. Missing `annotations: { readOnlyHint: true, openWorldHint: true }` property\n\nReference the working pattern in src/mcp/tools/get-announcements.ts or src/mcp/tools/get-calendar-events.ts. After fixing, run `deno task check` to verify zero type errors. Also run `deno task lint` and `deno task fmt`.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "claimed_by": "agent-2",
       "claimed_at": "2026-02-13T17:17:11Z"
     },
