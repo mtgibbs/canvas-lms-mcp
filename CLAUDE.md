@@ -35,6 +35,7 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 | `calendar`              | `get_calendar_events`        | Non-assignment calendar events           |
 | `status --all-students` | `get_all_students_status`    | Multi-student status overview            |
 | `feedback`              | `get_feedback`               | Teacher comments on submissions          |
+| `people`                | `get_people`                 | Teachers & TAs for courses               |
 
 **Before completing any feature work:**
 
@@ -153,6 +154,11 @@ canvas feedback --days 7               # last 7 days
 canvas feedback --course-id 12345      # specific course
 canvas feedback --format table
 
+# Teachers and TAs
+canvas people                          # all courses
+canvas people --course-id 12345        # specific course
+canvas people --format table
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (uses CANVAS_STUDENT_ID from config if not specified)
@@ -180,6 +186,7 @@ The MCP server exposes these tools to AI assistants:
 | `get_calendar_events`        | Non-assignment calendar events   | `student_id`, `days?`, `course_id?`                                    |
 | `get_all_students_status`    | **Multi-student overview**       | `days_upcoming?`, `days_grades?`, `low_grade_threshold?`               |
 | `get_feedback`               | Teacher comments on submissions  | `student_id`, `course_id?`, `days?`                                    |
+| `get_people`                 | Teachers & TAs for courses       | `student_id?`, `course_id?`                                            |
 
 **Recommended for daily check-ins:**
 

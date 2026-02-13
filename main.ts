@@ -23,6 +23,7 @@ import { communicationsCommand } from "./src/commands/communications.ts";
 import { studentsCommand } from "./src/commands/students.ts";
 import { calendarCommand } from "./src/commands/calendar.ts";
 import { feedbackCommand } from "./src/commands/feedback.ts";
+import { peopleCommand } from "./src/commands/people.ts";
 
 const VERSION = "0.1.0";
 
@@ -56,7 +57,8 @@ const cli = new Command()
   .command("communications", communicationsCommand)
   .command("students", studentsCommand)
   .command("calendar", calendarCommand)
-  .command("feedback", feedbackCommand);
+  .command("feedback", feedbackCommand)
+  .command("people", peopleCommand);
 
 // Run
 try {

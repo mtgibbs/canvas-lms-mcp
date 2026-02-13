@@ -161,3 +161,10 @@ export interface FeedbackItem {
   grade: string | null;
   url: string;
 }
+
+export interface PersonItem {
+  name: string;
+  role: "Teacher" | "TA";
+  email: string | null;
+  courses: Array<{ id: number; name: string }>;
+}

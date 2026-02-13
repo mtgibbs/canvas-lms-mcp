@@ -86,6 +86,7 @@ export interface User {
   login_id?: string;
   email?: string;
   avatar_url?: string;
+  enrollments?: Enrollment[];
 }
 
 /** Assignment object */
