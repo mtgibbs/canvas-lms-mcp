@@ -17,8 +17,8 @@
       "description": "Two files have type errors that fail `deno task check`. Fix them:\n\n1. src/services/feedback.ts (line 11):\n   - Currently: `import { listSubmissions, resolveUserId } from \"../api/users.ts\";`\n   - Problem: `listSubmissions` is NOT exported from ../api/users.ts. It is exported from ../api/submissions.ts.\n   - Fix: Split into two imports:\n     `import { listSubmissions } from \"../api/submissions.ts\";`\n     `import { resolveUserId } from \"../api/users.ts\";`\n   - This will also fix the implicit `any` errors on `sub` and `comment` variables in the same file, since the Submission type will now be properly resolved.\n\n2. src/commands/people.ts (line 40):\n   - Currently: `p.courses.map((c) => c.name).join(\", \")`\n   - Problem: `c` has implicit `any` type because the PersonItem type's courses field needs to be inferred.\n   - Fix: Add type annotation: `p.courses.map((c: { id: number; name: string }) => c.name).join(\", \")` OR import PersonItem from services/types.ts and type the rowMapper parameter.\n\nAfter fixing, run `deno task check` to verify zero type errors. Also run `deno task lint` and `deno task fmt`.",
       "priority": 2,
       "passes": false,
-      "claimed_by": "",
-      "claimed_at": ""
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-13T17:17:13Z"
     }
   ]
 }
