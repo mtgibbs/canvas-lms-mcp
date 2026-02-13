@@ -141,3 +141,9 @@ export interface ObservedStudent {
   short_name: string;
   sortable_name: string;
 }
+
+export interface MultiStudentStatus {
+  student_name: string;
+  student_id: number;
+  status: ComprehensiveStatus;
+}

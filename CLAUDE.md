@@ -16,23 +16,24 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 
 **When adding or modifying functionality, ALWAYS update BOTH interfaces:**
 
-| CLI Command      | MCP Tool                     | Description                              |
-| ---------------- | ---------------------------- | ---------------------------------------- |
-| `courses`        | `get_courses`                | List courses with grades                 |
-| `missing`        | `get_missing_assignments`    | Canvas-flagged missing work              |
-| `assignments`    | `list_assignments`           | Filter/search assignments                |
-| `grades`         | `get_recent_grades`          | Graded submissions with scores           |
-| `upcoming`       | `get_upcoming_assignments`   | Assignments due soon (single course)     |
-| `todo`           | `get_todo`                   | Planner items                            |
-| `stats`          | `get_stats`                  | Late/missing statistics                  |
-| `status`         | `get_comprehensive_status`   | Full overview (all data in one call)     |
-| `due`            | `get_due_this_week`          | Upcoming across ALL courses              |
-| `unsubmitted`    | `get_unsubmitted_past_due`   | Past-due but not submitted               |
-| `announcements`  | `get_announcements`          | Recent course announcements              |
-| `inbox`          | `get_inbox`                  | Canvas inbox conversations               |
-| `communications` | `get_teacher_communications` | Combined announcements + inbox           |
-| `students`       | `get_students`               | List observed students (parent/observer) |
-| `calendar`       | `get_calendar_events`        | Non-assignment calendar events           |
+| CLI Command             | MCP Tool                     | Description                              |
+| ----------------------- | ---------------------------- | ---------------------------------------- |
+| `courses`               | `get_courses`                | List courses with grades                 |
+| `missing`               | `get_missing_assignments`    | Canvas-flagged missing work              |
+| `assignments`           | `list_assignments`           | Filter/search assignments                |
+| `grades`                | `get_recent_grades`          | Graded submissions with scores           |
+| `upcoming`              | `get_upcoming_assignments`   | Assignments due soon (single course)     |
+| `todo`                  | `get_todo`                   | Planner items                            |
+| `stats`                 | `get_stats`                  | Late/missing statistics                  |
+| `status`                | `get_comprehensive_status`   | Full overview (all data in one call)     |
+| `due`                   | `get_due_this_week`          | Upcoming across ALL courses              |
+| `unsubmitted`           | `get_unsubmitted_past_due`   | Past-due but not submitted               |
+| `announcements`         | `get_announcements`          | Recent course announcements              |
+| `inbox`                 | `get_inbox`                  | Canvas inbox conversations               |
+| `communications`        | `get_teacher_communications` | Combined announcements + inbox           |
+| `students`              | `get_students`               | List observed students (parent/observer) |
+| `calendar`              | `get_calendar_events`        | Non-assignment calendar events           |
+| `status --all-students` | `get_all_students_status`    | Multi-student status overview            |
 
 **Before completing any feature work:**
 
@@ -77,6 +78,7 @@ deno task test
 # Comprehensive status (recommended for daily check-ins)
 canvas status --format table
 canvas status --days-upcoming 7 --days-grades 14 --threshold 70
+canvas status --all-students  # Get status for ALL observed students
 
 # List courses with grades
 canvas courses
@@ -169,9 +171,14 @@ The MCP server exposes these tools to AI assistants:
 | `get_inbox`                  | Canvas inbox conversations       | `student_id`, `scope?`, `course_id?`                                   |
 | `get_teacher_communications` | Announcements + inbox combined   | `student_id`, `days?`, `course_id?`                                    |
 | `get_calendar_events`        | Non-assignment calendar events   | `student_id`, `days?`, `course_id?`                                    |
+| `get_all_students_status`    | **Multi-student overview**       | `days_upcoming?`, `days_grades?`, `low_grade_threshold?`               |
 
-**Recommended for daily check-ins:** Use `get_comprehensive_status` - it returns courses, grades,
-missing work, upcoming assignments, recent low grades, and recent announcements in a single call.
+**Recommended for daily check-ins:**
+
+- Single student: Use `get_comprehensive_status` - returns courses, grades, missing work, upcoming
+  assignments, recent low grades, and announcements in a single call.
+- Multiple students: Use `get_all_students_status` - returns comprehensive status for ALL observed
+  students, with each student's data clearly labeled to prevent mix-ups.
 
 ## Architecture
 

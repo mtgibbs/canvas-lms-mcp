@@ -51,3 +51,4 @@ export {
 } from "./communications.ts";
 export { getObservedStudents } from "./students.ts";
 export { getCalendarEvents, type GetCalendarEventsOptions } from "./calendar.ts";
+export { getAllStudentsStatus, type GetAllStudentsStatusOptions } from "./multi-student-status.ts";
