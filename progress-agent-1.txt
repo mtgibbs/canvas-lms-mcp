@@ -104,3 +104,18 @@
 
 ---
 
+## 2026-02-13T17:20:00Z - US-021
+
+- Fixed type errors in feedback.ts and people.ts
+- Files modified:
+  - src/services/feedback.ts - Split imports: listSubmissions from submissions.ts, resolveUserId from users.ts
+  - src/commands/people.ts - Added type annotation to courses map callback: `(c: { id: number; name: string })`
+- **Learnings for future iterations:**
+  - Always verify which module exports which functions - listSubmissions is in submissions.ts, not users.ts
+  - Type annotations can be added inline when the full type isn't needed (e.g., for map callbacks)
+  - After fixing import errors, implicit `any` errors on variables using those types are automatically resolved
+  - The fix for feedback.ts also resolved implicit `any` on `sub` and `comment` variables since Submission type is now properly imported
+  - Small focused commits are better than batching multiple fixes together
+  
+---
+
