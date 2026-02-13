@@ -121,3 +121,10 @@ export interface CourseStats {
   missing_count: number;
   total_assignments: number;
 }
+
+export interface ObservedStudent {
+  id: number;
+  name: string;
+  short_name: string;
+  sortable_name: string;
+}

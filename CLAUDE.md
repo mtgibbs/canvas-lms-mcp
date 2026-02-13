@@ -16,21 +16,22 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 
 **When adding or modifying functionality, ALWAYS update BOTH interfaces:**
 
-| CLI Command      | MCP Tool                     | Description                          |
-| ---------------- | ---------------------------- | ------------------------------------ |
-| `courses`        | `get_courses`                | List courses with grades             |
-| `missing`        | `get_missing_assignments`    | Canvas-flagged missing work          |
-| `assignments`    | `list_assignments`           | Filter/search assignments            |
-| `grades`         | `get_recent_grades`          | Graded submissions with scores       |
-| `upcoming`       | `get_upcoming_assignments`   | Assignments due soon (single course) |
-| `todo`           | `get_todo`                   | Planner items                        |
-| `stats`          | `get_stats`                  | Late/missing statistics              |
-| `status`         | `get_comprehensive_status`   | Full overview (all data in one call) |
-| `due`            | `get_due_this_week`          | Upcoming across ALL courses          |
-| `unsubmitted`    | `get_unsubmitted_past_due`   | Past-due but not submitted           |
-| `announcements`  | `get_announcements`          | Recent course announcements          |
-| `inbox`          | `get_inbox`                  | Canvas inbox conversations           |
-| `communications` | `get_teacher_communications` | Combined announcements + inbox       |
+| CLI Command      | MCP Tool                     | Description                              |
+| ---------------- | ---------------------------- | ---------------------------------------- |
+| `courses`        | `get_courses`                | List courses with grades                 |
+| `missing`        | `get_missing_assignments`    | Canvas-flagged missing work              |
+| `assignments`    | `list_assignments`           | Filter/search assignments                |
+| `grades`         | `get_recent_grades`          | Graded submissions with scores           |
+| `upcoming`       | `get_upcoming_assignments`   | Assignments due soon (single course)     |
+| `todo`           | `get_todo`                   | Planner items                            |
+| `stats`          | `get_stats`                  | Late/missing statistics                  |
+| `status`         | `get_comprehensive_status`   | Full overview (all data in one call)     |
+| `due`            | `get_due_this_week`          | Upcoming across ALL courses              |
+| `unsubmitted`    | `get_unsubmitted_past_due`   | Past-due but not submitted               |
+| `announcements`  | `get_announcements`          | Recent course announcements              |
+| `inbox`          | `get_inbox`                  | Canvas inbox conversations               |
+| `communications` | `get_teacher_communications` | Combined announcements + inbox           |
+| `students`       | `get_students`               | List observed students (parent/observer) |
 
 **Before completing any feature work:**
 
