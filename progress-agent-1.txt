@@ -54,3 +54,27 @@
 
 ---
 
+## 2026-02-13T16:15:00Z - US-017
+
+- Implemented "Submission Feedback & Comments" feature
+- Files created:
+  - src/services/feedback.ts - Service for fetching teacher comments on submissions
+  - src/commands/feedback.ts - CLI command with --course-id, --days, --format, --student options
+  - src/mcp/tools/get-feedback.ts - MCP tool with student_id, course_id, days params
+- Files modified:
+  - src/services/types.ts - Added FeedbackItem interface
+  - src/services/index.ts - Exported getFeedback service
+  - main.ts - Registered feedback command
+  - src/mcp/tools/index.ts - Registered getFeedbackTool
+  - CLAUDE.md - Updated parity table and CLI usage examples
+- **Learnings for future iterations:**
+  - When reusing existing API modules (like submissions.ts), don't need to create new API layer - can use listSubmissions directly from service
+  - SubmissionComment type already exists in canvas.ts - check existing types before adding new ones
+  - Filter submissions by presence of submission_comments array and its length > 0
+  - Comments should be filtered by created_at date, not submission date
+  - For each comment, create a separate FeedbackItem to allow proper sorting by comment date
+  - Table output for long text fields (like comment_text) should truncate with "..." for readability
+  - MCP tool descriptions should emphasize the use case: "Critical for parents who want to see what teachers are saying"
+
+---
+
