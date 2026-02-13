@@ -32,6 +32,7 @@ Both interfaces share the same API layer (`src/api/`) and should have **feature 
 | `inbox`          | `get_inbox`                  | Canvas inbox conversations               |
 | `communications` | `get_teacher_communications` | Combined announcements + inbox           |
 | `students`       | `get_students`               | List observed students (parent/observer) |
+| `calendar`       | `get_calendar_events`        | Non-assignment calendar events           |
 
 **Before completing any feature work:**
 
@@ -137,6 +138,12 @@ canvas communications --days 14        # last 14 days
 canvas communications --course-id 12345
 canvas communications --format table
 
+# Calendar events (office hours, review sessions, school events, field trips)
+canvas calendar                        # next 14 days, all courses
+canvas calendar --days 7               # next 7 days
+canvas calendar --course-id 12345      # specific course
+canvas calendar --format table
+
 # Global options (work with all commands)
 --format <json|table>  # Output format (default: json)
 --student <id>         # Student ID for observer accounts (uses CANVAS_STUDENT_ID from config if not specified)
@@ -161,6 +168,7 @@ The MCP server exposes these tools to AI assistants:
 | `get_announcements`          | Recent course announcements      | `student_id`, `days?`, `course_id?`                                    |
 | `get_inbox`                  | Canvas inbox conversations       | `student_id`, `scope?`, `course_id?`                                   |
 | `get_teacher_communications` | Announcements + inbox combined   | `student_id`, `days?`, `course_id?`                                    |
+| `get_calendar_events`        | Non-assignment calendar events   | `student_id`, `days?`, `course_id?`                                    |
 
 **Recommended for daily check-ins:** Use `get_comprehensive_status` - it returns courses, grades,
 missing work, upcoming assignments, recent low grades, and recent announcements in a single call.
@@ -172,12 +180,12 @@ src/
 ├── api/           # Canvas API client (shared by CLI and MCP)
 │   ├── client.ts  # HTTP client with auth and pagination
 │   ├── courses.ts, assignments.ts, submissions.ts, users.ts, enrollments.ts
-│   ├── announcements.ts, conversations.ts
+│   ├── announcements.ts, conversations.ts, calendar.ts
 ├── commands/      # CLI commands (Cliffy)
 │   ├── courses.ts, missing.ts, assignments.ts, grades.ts
 │   ├── upcoming.ts, todo.ts, stats.ts, status.ts
 │   ├── due.ts, unsubmitted.ts
-│   ├── announcements.ts, inbox.ts, communications.ts
+│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts
 ├── mcp/           # MCP server components
 │   ├── server.ts  # Server setup and tool registration
 │   ├── types.ts   # Tool definition types
@@ -185,6 +193,7 @@ src/
 │   │   ├── get-courses.ts, get-missing-assignments.ts, ...
 │   │   ├── get-recent-grades.ts, get-comprehensive-status.ts
 │   │   ├── get-announcements.ts, get-inbox.ts, get-teacher-communications.ts
+│   │   ├── get-calendar-events.ts
 │   │   └── index.ts  # Tool registry
 │   └── prompts/   # MCP prompts (conversation starters)
 │       ├── daily-checkin.ts, week-planning.ts, ...
@@ -194,7 +203,7 @@ src/
 │   ├── courses.ts, missing.ts, assignments.ts, grades.ts
 │   ├── upcoming.ts, todo.ts, stats.ts, status.ts
 │   ├── due.ts, unsubmitted.ts, upcoming-events.ts
-│   ├── announcements.ts, inbox.ts, communications.ts
+│   ├── announcements.ts, inbox.ts, communications.ts, calendar.ts
 ├── types/
 │   └── canvas.ts  # TypeScript interfaces for Canvas API
 └── utils/
@@ -238,6 +247,7 @@ CANVAS_STUDENT_ID=self
 | todo          | `GET /api/v1/planner/items` with context_codes |
 | announcements | `GET /api/v1/announcements` with context_codes |
 | inbox         | `GET /api/v1/conversations`                    |
+| calendar      | `GET /api/v1/calendar_events` with type=event  |
 
 ## Important Canvas API Behaviors
 

@@ -16,6 +16,7 @@ import { getAnnouncementsTool } from "./get-announcements.ts";
 import { getInboxTool } from "./get-inbox.ts";
 import { getTeacherCommunicationsTool } from "./get-teacher-communications.ts";
 import { getStudentsTool } from "./get-students.ts";
+import { getCalendarEventsTool } from "./get-calendar-events.ts";
 import type { AnyToolDefinition } from "../types.ts";
 
 /**
@@ -36,11 +37,13 @@ export const tools: AnyToolDefinition[] = [
   getInboxTool,
   getTeacherCommunicationsTool,
   getStudentsTool,
+  getCalendarEventsTool,
 ];
 
 // Re-export individual tools for direct access if needed
 export {
   getAnnouncementsTool,
+  getCalendarEventsTool,
   getComprehensiveStatusTool,
   getCoursesTool,
   getDueThisWeekTool,

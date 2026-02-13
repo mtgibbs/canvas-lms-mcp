@@ -1,0 +1,42 @@
+## Codebase Patterns
+
+- **4-layer pattern**: All features follow the same structure:
+  1. Canvas API types in `src/types/canvas.ts`
+  2. API client in `src/api/` (calls Canvas REST endpoints)
+  3. Service layer in `src/services/` (business logic shared by CLI and MCP)
+  4. CLI command in `src/commands/` + MCP tool in `src/mcp/tools/`
+
+- **CLI/MCP Parity**: Every CLI command MUST have a corresponding MCP tool with the same functionality. Update CLAUDE.md parity table when adding features.
+
+- **Service pattern**: Services accept options interfaces and return typed results. CLI and MCP both call the same service function to ensure identical behavior.
+
+- **Date filtering**: Use ISO strings for date ranges. Most tools look back N days (announcements) or forward N days (calendar, upcoming).
+
+- **Course filtering**: When fetching across all courses, use `listCoursesWithGrades()` to get active courses, then use `Promise.all()` to parallelize requests.
+
+---
+
+## 2026-02-13T15:40:00Z - US-016
+
+- What was implemented: Calendar Events feature - shows non-assignment calendar events (office hours, review sessions, school events, field trips)
+- Files changed:
+  - `src/types/canvas.ts`: Added CalendarEvent type with fields id, title, description, start_at, end_at, location_name, location_address, context_code, html_url, workflow_state
+  - `src/api/calendar.ts`: Created API client for GET /api/v1/calendar_events with type=event filter
+  - `src/services/types.ts`: Added CalendarEventItem service type
+  - `src/services/calendar.ts`: Created service that fetches calendar events for courses, filters to active events, truncates descriptions to 200 chars
+  - `src/services/index.ts`: Exported calendar service
+  - `src/commands/calendar.ts`: Created CLI command with --course-id, --days, --format, --student options
+  - `main.ts`: Registered calendar command
+  - `src/mcp/tools/get-calendar-events.ts`: Created MCP tool with student_id, days, course_id parameters
+  - `src/mcp/tools/index.ts`: Registered get_calendar_events tool
+  - `CLAUDE.md`: Updated parity table, CLI usage examples, MCP tools table, architecture diagram, and key endpoints table
+
+- **Learnings for future iterations:**
+  - Pattern discovered: Use `type=event` parameter to filter calendar events vs assignments
+  - Pattern discovered: All services that work across courses should build context_codes array (`course_${id}`) and create a courseNameMap for display
+  - Pattern discovered: Filter by workflow_state to exclude deleted/inactive items
+  - Gotcha: Description truncation is done in the service layer (not API or view layer)
+  - Gotcha: When using formatDate in CLI commands, import both `formatDate` and `output` from utils/output.ts
+  - Context: CLAUDE.md has multiple sections that need updating: parity table (line 19-34), CLI usage (line 73-148), MCP tools table (line 155-170), architecture (line 177-210), and key endpoints (line 238-248)
+
+---

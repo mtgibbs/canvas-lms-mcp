@@ -87,6 +87,19 @@ export interface InboxItem {
   context_name: string | null;
 }
 
+export interface CalendarEventItem {
+  id: number;
+  title: string;
+  description: string | null;
+  start_at: string;
+  end_at: string | null;
+  location_name: string | null;
+  location_address: string | null;
+  course_id: number;
+  course_name: string;
+  url: string;
+}
+
 export interface TeacherCommunications {
   announcements: AnnouncementItem[];
   inbox: InboxItem[];

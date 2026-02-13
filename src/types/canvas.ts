@@ -272,6 +272,20 @@ export interface PlannerSubmissionStatus {
   redo_request: boolean;
 }
 
+/** Calendar event (non-assignment events like office hours, school events, etc.) */
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  description: string | null;
+  start_at: string;
+  end_at: string | null;
+  location_name: string | null;
+  location_address: string | null;
+  context_code: string;
+  html_url: string;
+  workflow_state: "active" | "deleted";
+}
+
 /** Announcement (discussion topic with is_announcement=true) */
 export interface Announcement {
   id: number;

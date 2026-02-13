@@ -50,3 +50,4 @@ export {
   type GetTeacherCommunicationsOptions,
 } from "./communications.ts";
 export { getObservedStudents } from "./students.ts";
+export { getCalendarEvents, type GetCalendarEventsOptions } from "./calendar.ts";
