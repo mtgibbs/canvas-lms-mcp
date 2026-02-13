@@ -78,3 +78,29 @@
 
 ---
 
+## 2026-02-13T16:30:00Z - US-019
+
+- Implemented "Course People (Teachers & TAs)" feature
+- Files created:
+  - src/api/people.ts - API client for GET /api/v1/courses/:course_id/users endpoint
+  - src/services/people.ts - Service with deduplication logic for people across courses
+  - src/commands/people.ts - CLI command with --course-id, --format, --student options
+  - src/mcp/tools/get-people.ts - MCP tool with student_id, course_id params
+- Files modified:
+  - src/types/canvas.ts - Added optional enrollments field to User interface
+  - src/services/types.ts - Added PersonItem interface
+  - src/services/index.ts - Exported getPeople service
+  - main.ts - Registered people command
+  - src/mcp/tools/index.ts - Registered getPeopleTool
+  - CLAUDE.md - Updated parity table, CLI usage, and MCP tools table
+- **Learnings for future iterations:**
+  - When API returns fields not in the TypeScript interface (like enrollments on User), update the interface to include them as optional fields
+  - Deduplication logic: Use Map<userId, person> to group by ID, then aggregate courses for each person
+  - Enrollment type can be "TeacherEnrollment" or "TaEnrollment" - check the type field to determine role
+  - When fetching users with enrollment_type filter, pass as array: ["teacher", "ta"]
+  - include parameter should be array: ["email", "enrollments"]
+  - Sort results by name for better UX (both people and their courses arrays)
+  - For multi-course display in table format, use .join(", ") to show all course names in one column
+
+---
+
